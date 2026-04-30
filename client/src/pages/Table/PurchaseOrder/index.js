@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect, useRef } from "react"; 
 import { useParams , useNavigate, useLocation } from "react-router-dom";      
-import axios from "axios";
+import api from "../../../axios";
+import { poService } from "../../../services/poService";
 import ReactPaginate from "react-paginate";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useSelector } from "react-redux";
@@ -35,7 +36,6 @@ const PurchaseTable = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [poModal, setPoModal] = useState(false);
 
-  const apiUrl = process.env.REACT_APP_API_URL;
   const itemsPerPage = 20;
 
   const regionOptions = [
@@ -137,9 +137,7 @@ const PurchaseTable = () => {
 
   const fetchLeaders = useCallback(async () => {
     try {
-      const res = await axios.get(`${apiUrl}/users/getusers`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/users/getusers");
       const responseData = res.data;
       if (responseData.success === false) {
         console.log(responseData.message);
@@ -153,13 +151,11 @@ const PurchaseTable = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl]);
+  }, []);
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get(`${apiUrl}/po/getAll`, {
-        withCredentials: true,
-      });
+      const res = await poService.getAll();
       const responseData = res.data;
 
       if (responseData.success === false) {
@@ -214,7 +210,7 @@ const PurchaseTable = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl, query, selectedStatuses, selectedClusters, selectedLeaders, selectedRegion, itemsPerPage]);
+  }, [query, selectedStatuses, selectedClusters, selectedLeaders, selectedRegion, itemsPerPage]);
 
   useEffect(() => {
     fetchData();
@@ -279,9 +275,7 @@ const PurchaseTable = () => {
   // Export data as CSV
   const handleExportCSV = async () => {
 
-    const res = await axios.get(`${apiUrl}/analytics/getPoExcelData`, {
-      withCredentials: true,
-    });
+    const res = await api.get("/analytics/getPoExcelData");
     const responseData = res.data;
 
     const csv = Papa.unparse(responseData, {

@@ -5,7 +5,8 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import MissUpdate from "../../../components/Modal/Update/MissionUpdateModal";
 import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../../axios";
+import { missionService } from "../../../services/missionService";
 import Select from "react-select";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
@@ -37,7 +38,6 @@ const Table = () => {
   const [pageCount, setpageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 20;
-  const apiUrl = process.env.REACT_APP_API_URL;
   const statusOptions = ["Yet to Start", "In Progress", "Closed"];
   const Clusters = ["MEBM", "MNT", "SNPS", "RDI", "JSO", "Other"];
   const missionType = ["External", "Internal"];
@@ -165,8 +165,7 @@ const Table = () => {
 
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getusers`, { withCredentials: true })
+    api.get("/users/getusers")
       .then((response) => {
         const data = response.data;
         const filteredUsers = data.filter(
@@ -177,13 +176,11 @@ const Table = () => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/mission/getAll`, {
-        withCredentials: true,
-      });
+      const res = await missionService.getAll();
       const responseData = res.data;
 
       if (responseData.success === false) {

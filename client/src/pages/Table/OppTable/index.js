@@ -5,7 +5,8 @@ import AddModal from "../../../components/Modal/AddModal";
 import "react-toastify/dist/ReactToastify.css";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../../axios";
+import { opportunityService } from "../../../services/opportunityService";
 import DataModal from "../../../components/Modal/DateModal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { toast } from "react-toastify";
@@ -36,7 +37,6 @@ const Table = () => {
   const [selectedOpp, setSelectedOpp] = useState([]);
   const [formData, setFormData] = useState({});
   const [query, setQuery] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
   const Status = ["Prospection", "Advanced", "Proposal", "Won", "Lost", "Hold"];
   const Clusters = ["MEBM", "MNT", "SNPS", "RDI", "JSO", "Other"];
   const priorities = ["High", "Medium", "Low"];
@@ -157,9 +157,7 @@ const Table = () => {
     ];
 
     try {
-      const res = await axios.get(`${apiUrl}/oppurtunities/getOpp`, {
-        withCredentials: true,
-      });
+      const res = await opportunityService.getAll();
       const responseData = res.data;
 
       if (responseData.success === false) {
@@ -218,7 +216,6 @@ const Table = () => {
     }
 
   }, [
-    apiUrl,
     leadUser,
     selectedStatuses,
     selectedClusters,
@@ -229,9 +226,7 @@ const Table = () => {
 
   const fetchUserOptions = useCallback(async () => {
     try {
-      const res = await axios.get(`${apiUrl}/users/getusers`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/users/getusers");
       const data = res.data;
       const filteredUsers = data.filter(
         (user) => user.user_type === "Admin" || user.user_type === "Leader"
@@ -240,7 +235,7 @@ const Table = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  }, [apiUrl]);
+  }, []);
 
 
   useEffect(() => {
@@ -309,14 +304,7 @@ const Table = () => {
 
     try {
       // Update opportunity in database
-      await axios.put(
-        `${apiUrl}/oppurtunities/update/${id}`,
-        { MarkedOpp: !isSelected },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      await opportunityService.update(id, { MarkedOpp: !isSelected });
       toast.success("Opportunity marked successfully");
     } catch (error) {
       toast.error("Failed to mark opportunity");
@@ -351,16 +339,7 @@ const Table = () => {
 
     // Save to backend
     try {
-      const res = await axios.put(
-        `${apiUrl}/oppurtunities/update/${id}`,
-        updatedItem,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await opportunityService.update(id, updatedItem);
 
       const responseData = res.data;
 

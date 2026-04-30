@@ -3,7 +3,9 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import ProjectModal from "../../../components/Modal/Update/ProjectUpdateModal";
 import ReactPaginate from "react-paginate";
 import Select from "react-select";
-import axios from "axios";
+import api from "../../../axios";
+import { projectService } from "../../../services/projectService";
+import { missionService } from "../../../services/missionService";
 import { Dropdown } from "flowbite-react";
 import { useSelector } from "react-redux";
 import { saveAs } from "file-saver";
@@ -28,7 +30,6 @@ const Table = () => {
   const [pageCount, setpageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const Clusters = ["MEBM", "MNT", "SNPS", "RDI", "JSO", "Other"];
-  const apiUrl = process.env.REACT_APP_API_URL;
   const itemsPerPage = 20;
   const regionOptions = [
     { value: "FR", label: "France" },
@@ -138,9 +139,7 @@ const Table = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get(`${apiUrl}/project/getProj`, {
-        withCredentials: true,
-      });
+      const res = await projectService.getAll();
       const responseData = res.data;
 
       if (responseData.success === false) {
@@ -193,14 +192,12 @@ const Table = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl, query, selectedClusters, selectedRegion, selectedStatus, sortConfig]);
+  }, [query, selectedClusters, selectedRegion, selectedStatus, sortConfig]);
 
   const fetchMissionData = useCallback(async () => {
     // Fetch mission data
     try {
-      const res = await axios.get(`${apiUrl}/mission/getAll`, {
-        withCredentials: true,
-      });
+      const res = await missionService.getAll();
       const data = res.data;
 
       if (data.success === false) {
@@ -211,13 +208,11 @@ const Table = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl]);
+  }, []);
 
   const fetchUserOptions = useCallback(async () => {
     try {
-      const res = await axios.get(`${apiUrl}/users/getusers`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/users/getusers");
       const data = res.data;
       //console.log(data)
       setUser(data);
@@ -225,7 +220,7 @@ const Table = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -236,9 +231,7 @@ const Table = () => {
   // Export data as CSV
   const handleExportCSV = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/project/getProjectExcel`, {
-        withCredentials: true,
-      });
+      const res = await projectService.exportExcel();
 
       const csv = Papa.unparse(res.data, { header: true });
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
