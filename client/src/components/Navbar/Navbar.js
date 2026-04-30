@@ -17,10 +17,10 @@ import { Button } from "@mui/material";
 const Navbar = ({ onToggleSidebar }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [profileData, setProfileData] = useState({});
-  const [error, setError] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const location = useLocation();
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     if (profileData && profileData.profileImage) {
@@ -43,8 +43,8 @@ const Navbar = ({ onToggleSidebar }) => {
         } else {
           setProfileData(profileData);
         }
-      } catch (error) {
-        setError(true);
+      } catch {
+        // Profile fetch failure handled by global interceptor
       }
     };
     getProfileData();
@@ -77,19 +77,18 @@ const Navbar = ({ onToggleSidebar }) => {
 
   const handleSignOut = async () => {
     try {
-      const res = await api.post(`/users/signout`);
-      const data = res.data;
-      if (data.success === false) {
-        console.log(data.message);
-      } else {
-        dispatch(signoutSuccess(data));
-        dispatch(profileSignOut(data));
-      }
-    } catch (error) {
-      // setError(true);
-      console.log(error);
+      await api.post('/auth/signOut');
+      dispatch(signoutSuccess());
+      dispatch(profileSignOut());
+      window.location.href = '/sign-in';
+    } catch {
+      // Even if server call fails, clear local state and redirect
+      dispatch(signoutSuccess());
+      dispatch(profileSignOut());
+      window.location.href = '/sign-in';
     }
   };
+
 
   return (
     <header className={`z-40 sticky top-0`}>

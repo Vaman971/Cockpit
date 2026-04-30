@@ -2,7 +2,7 @@ import { useState } from "react";
 import IconMail from "../../components/Icon/IconMail";
 import IconLockDots from "../../components/Icon/IconLockDots";
 import { Alert, Spinner } from "flowbite-react";
-import axios from "axios";
+import api from "../../axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,7 +16,6 @@ const LoginCover = () => {
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handlechange = (e) => {
     setFormData({ ...formdata, [e.target.id]: e.target.value });
@@ -24,36 +23,30 @@ const LoginCover = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formdata.email || !formdata.password) {
-      return dispatch(SignInFailure("Fill all the details corrrectly"));
+      return dispatch(SignInFailure("Please fill in both email and password."));
     }
 
     try {
       dispatch(signInStart());
 
-      const res = await axios.post(`${apiUrl}/auth/signIn`, formdata, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      // Use shared api instance — interceptor handles 401/403/422/500 automatically
+      const res = await api.post('/auth/signIn', formdata);
 
-      const data = res.data;
-      // console.log(res);
-
-      if (res.status === 200) {
-        dispatch(signInSuccess(data));
-        navigate("/");
-      } else{
-        // console.log(data.message)
-        dispatch(SignInFailure(data.message));
-      }
-      // console.log(data)
-      // Process the response data as needed
+      dispatch(signInSuccess(res.data));
+      navigate("/");
     } catch (error) {
-      dispatch(SignInFailure(error.response.data.message));
+      // Safely extract message whether it's a server or network error
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Sign in failed. Please try again.";
+      dispatch(SignInFailure(message));
     }
   };
+
 
   return (
     <div>

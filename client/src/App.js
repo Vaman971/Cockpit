@@ -36,6 +36,8 @@ import OpportunityPage from "./pages/OverviewPage";
 import CustomerTable from "./pages/Table/CustomerTable";
 import CustomerDetailsPage from "./pages/CustomerDetailsPage/index.js";
 import SharePointPage from "./pages/SharePointPage";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
@@ -116,7 +118,19 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <BrowserRouter>
       {currentUser && currentUser.user.active && (
         <>
           <Navbar onToggleSidebar={handleSidebar} icon={icon} />
@@ -160,7 +174,8 @@ function App() {
       </Routes>
       {currentUser && currentUser.user.active && <FooterComp />}
       <SessionTimeoutModal showModal={showModal} onClose={handleSignOut} />
-    </BrowserRouter>
+      </BrowserRouter>
+    </>
   );
 }
 
