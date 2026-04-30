@@ -1,76 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 import Select from 'react-select';
 
-const ExtentionModal = ({ isOpen, onClose }) => {
+const ExtensionModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({});
   const [user, setUser] = useState(null);
   const [projData, setProjData] = useState(null);
   const [missionExtention, setMissionExtention] = useState(null);
   const [projectLead, setProjectLead] = useState(null);
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/extention/createExtention`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await api.post('/extension/createExtension', formData);
       const data = res.data;
 
       if (data.success === false) {
-        console.log(data.message);
+        toast.error(data.message || 'Validation failed');
         return;
       } else {
-        toast.success("Mission Created!!");
+        toast.success("Extension Created!!");
         onClose();
       }
     } catch (error) {
-      console.log(error.message);
+      // Global interceptor handles toasts for 422 and 500
     }
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getusers`, {withCredentials:true})
+    api.get("/users/getusers")
       .then((response) => {
-        const data = response.data;
-        const filteredUsers = data.filter(user => user.user_type === "Admin" || user.user_type === "Leader");
+        const filteredUsers = response.data.filter(user => user.user_type === "Admin" || user.user_type === "Leader");
         setUser(filteredUsers);
       })
       .catch((error) => {
-        console.error("Error fetching users:", error);
+        // handled by interceptor
       });
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/project/getProj`,{withCredentials: true})
+    api.get("/project/getProj")
       .then((response) => {
         setProjData(response.data);
       })
       .catch((error) => {
-        console.error("Error fetching users:", error);
+        // handled by interceptor
       });
-  }, [apiUrl]);
+  }, []);
 
   const handleProjectLead = (selectedOption) => {
     setProjectLead(selectedOption);
     setFormData({ ...formData, projectLeader: selectedOption.value });
   };
 
-  const handleProjectChange = (selectedOption) =>{
+  const handleProjectChange = (selectedOption) => {
     setMissionExtention(selectedOption);
-    setFormData({...formData, extentionProjectId: selectedOption.value});
-  }
+    setFormData({ ...formData, extentionProjectId: selectedOption.value });
+  };
 
   const customStyles = {
     control: (provided, state) => ({
@@ -89,8 +76,8 @@ const ExtentionModal = ({ isOpen, onClose }) => {
       color: '#1D4ED8',
       '& input': {
         boxShadow: 'none',
-        caretColor: 'black',  // Custom caret color
-        outline: 'none',        // Remove outline to get rid of the blue box
+        caretColor: 'black',
+        outline: 'none',
       },
     }),
     singleValue: (provided) => ({
@@ -177,7 +164,7 @@ const ExtentionModal = ({ isOpen, onClose }) => {
                 placeholder="Select the Project"
               />
 
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-4">
                 <button
                   type="submit"
                   className="bg-blue-600 text-white py-2 px-4 rounded-md mr-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -200,4 +187,4 @@ const ExtentionModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default ExtentionModal;
+export default ExtensionModal;

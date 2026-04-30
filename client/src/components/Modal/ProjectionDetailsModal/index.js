@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import axios from "axios";
+import api from "../../../axios";
 import React, { useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -11,7 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 import { useCallback } from "react";
  
-const ProjectionDetails = ({ isOpen, onClose, extentionId }) => {
+const ProjectionDetails = ({ isOpen, onClose, extensionId }) => {
   const [data, setData] = useState([]);
   const [invoiceIdToDelete, setInvoiceIdToDelete] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -23,13 +23,10 @@ const ProjectionDetails = ({ isOpen, onClose, extentionId }) => {
   const [initialMonthValue, setInitialMonthValue] = useState(null);
   const [initialprojectionInvoice, setinitialprojectionInvoice] = useState(null);
  
-  const apiUrl = process.env.REACT_APP_API_URL;
- 
   const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${apiUrl}/extentionInvoice/getExtentionInvoicesByExtentionId/${extentionId}`,
-        { withCredentials: true }
+      const res = await api.get(
+        `/extensionInvoice/getExtentionInvoicesByExtentionId/${extensionId}`
       );
       const responseData = res.data;
       if (responseData.success === false) {
@@ -40,11 +37,11 @@ const ProjectionDetails = ({ isOpen, onClose, extentionId }) => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl, extentionId]);
+  }, [extensionId]);
  
   useEffect(() => {
     fetchData();
-  }, [fetchData, apiUrl, showModal, updatedMonth, updatedInvoice, updatedProjection]);
+  }, [fetchData, showModal, updatedMonth, updatedInvoice, updatedProjection]);
  
   const handleInvoiceModal = async () => {
     try {
@@ -52,12 +49,9 @@ const ProjectionDetails = ({ isOpen, onClose, extentionId }) => {
         invoiceDate: '',
         revenueProjection: 0,
       };
-      const res = await axios.post(
-        `${apiUrl}/extentionInvoice/createExtentionInvoice/${extentionId}`,
-        newInvoice,
-        {
-          withCredentials: true,
-        }
+      const res = await api.post(
+        `/extensionInvoice/createExtensionInvoice/${extensionId}`,
+        newInvoice
       );
       const data = res.data;
       if (data.success === false) {
@@ -75,9 +69,8 @@ const ProjectionDetails = ({ isOpen, onClose, extentionId }) => {
  
   const handleDeleteInvoice = async () => {
     try {
-      const res = await axios.delete(
-        `${apiUrl}/extentionInvoice/deleteExtentionInvoice/${invoiceIdToDelete}`,
-        { withCredentials: true }
+      const res = await api.delete(
+        `/extensionInvoice/deleteExtensionInvoice/${invoiceIdToDelete}`
       );
  
       const data = res.data;
@@ -126,10 +119,9 @@ const ProjectionDetails = ({ isOpen, onClose, extentionId }) => {
  
     if (shouldUpdate) {
       try {
-        const response = await axios.put(
-          `${apiUrl}/extentionInvoice/updateExtentionInvoice/${editingInvoiceId}`,
-          updatedData,
-          { withCredentials: true }
+        const response = await api.put(
+          `/extensionInvoice/updateExtensionInvoice/${editingInvoiceId}`,
+          updatedData
         );
  
         if (response.status === 200) {

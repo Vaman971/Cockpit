@@ -15,7 +15,7 @@ import POReceivedVsTotal from './POReceivedVsTotal'
 import TotalPO from './Total PO';
 import RecentPurchaseOrder from './RecentPurchaseOrder';
 import RecentForecast from './RecentForecast';
-import ExtensionLikeliness from './ExtentionLikeliness';
+import ExtensionLikeliness from './ExtensionLikeliness';
 const Finance_v2 = () => {
     const [currency, setCurrency] = useState("EUR");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);

@@ -30,7 +30,7 @@ import UserProfile from "./pages/UserProfile";
 // import TeamStats from "./pages/Table/TeamStats/index.js";
 import SessionTimeoutModal from "./components/Modal/SessionTimeOut";
 import { Spinner } from "flowbite-react";
-import ExtentionTable from "./pages/Table/ExtentionTable";
+import ExtensionTable from "./pages/Table/ExtensionTable";
 import MissionPage from "./pages/MissionPage";
 import OpportunityPage from "./pages/OverviewPage";
 import CustomerTable from "./pages/Table/CustomerTable";
@@ -153,7 +153,7 @@ function App() {
             <Route path="/expense" element={<FinanceTable />} />
             <Route path="/forecast" element={<ForecastTable />} />
             <Route path="/revenue" element={<RevenueTable />} />
-            <Route path="/extention" element={<ExtentionTable />} />
+            <Route path="/extension" element={<ExtensionTable />} />
             <Route path="/userManual" element={<UserManual />} />
             <Route path="/mission-details/:missionId" element={<MissionPage />} />
             <Route path="/opportunity-details/:opportunityId" element={<OpportunityPage/>}/>

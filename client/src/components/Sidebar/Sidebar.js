@@ -223,7 +223,7 @@ const Sidebar = ({ showSidebar, handleSidebar }) => {
                           </NavLink>
                         </li>
                         <li className="nav-item">
-                          <NavLink to="/extention" className="group">
+                          <NavLink to="/extension" className="group">
                             <div className="flex items-center">
                               <IconCreditCard className="group-hover:!text-primary shrink-0" />
                               <span className="pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
@@ -232,6 +232,7 @@ const Sidebar = ({ showSidebar, handleSidebar }) => {
                             </div>
                           </NavLink>
                         </li>
+
                         {(currentUser?.user.user_type === "Admin") &&(
                         <li className="nav-item">
                           <NavLink to="/forecast" className="group">
