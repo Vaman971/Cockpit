@@ -3,7 +3,7 @@ import Dropdown from '../../../components/Dropdown';
 import numeral from "numeral";
 import IconHorizontalDots from '../../../components/Icon/IconHorizontalDots';
 import ReactApexChart from 'react-apexcharts';
-import axios from 'axios';
+import api from "../../../axios";
 import { Spinner } from 'flowbite-react';
 
 const RevenueRecognizedChart = ({currency}) => {
@@ -15,7 +15,7 @@ const RevenueRecognizedChart = ({currency}) => {
     labels: [],
   });
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   
   const getCurrencySymbol = (currency) => {
@@ -40,7 +40,7 @@ const currencySymbol = getCurrencySymbol(currency);
     try {
       setLoading(true);
 
-      const response = await axios.get(`${apiUrl}/finance/getRevenueRecognizedPieChart?query=${revenueQuery}`,
+      const response = await api.get(`/finance/getRevenueRecognizedPieChart?query=${revenueQuery}`,
         {  params:{currency,revenueQuery},
           
           withCredentials: true }
@@ -61,7 +61,7 @@ const currencySymbol = getCurrencySymbol(currency);
   useEffect(() => {
     // Fetch data when `revenueQuery` changes
     fetchRevenueData(revenueQuery);
-  }, [revenueQuery,,apiUrl,currency]);
+  }, [revenueQuery, currency]);
 
   const formatLargeNumber = (number) => {
     return numeral(number).format("0.0a");

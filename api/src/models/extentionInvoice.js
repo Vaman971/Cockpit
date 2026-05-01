@@ -13,21 +13,25 @@ const ExtentionInvoice = sequelize.define(
       field: 'id',
     },
     invoiceDate: {
+      field: 'invoice_date',
       type: DataTypes.DATEONLY,
       allowNull: true,
       defaultValue: null,
     },
     revenueProjection: {
+      field: 'revenue_projection',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
       defaultValue: null,
     },
     actualRevenue: {
+      field: 'actual_revenue',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
       defaultValue: null,
     },
     currencyCode: {
+      field: 'currency_code',
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'EUR',

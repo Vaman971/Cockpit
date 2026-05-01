@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
+import api from "../../../axios";
 import IconEye from '../../../components/Icon/IconEye';
 import numeral from 'numeral';
 import { Spinner } from 'flowbite-react';
@@ -9,7 +9,7 @@ const RevenueRecognized = ({ currency }) => {
     const [overallRevenue, setOverallRevenue] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const apiUrl = process.env.REACT_APP_API_URL;
+
 
     const getCurrencySymbol = (currencyCode) => {
         switch (currencyCode) {
@@ -41,8 +41,8 @@ const RevenueRecognized = ({ currency }) => {
         const fetchRevenueData = async () => {
             try {
                 setLoading(true);
-                const response = await Axios.get(
-                    `${apiUrl}/finance/getRevenueRecognizedInfo`,
+                const response = await api.get(
+                    `/finance/getRevenueRecognizedInfo`,
                     {
                         params: { currency },
                         withCredentials: true,
@@ -62,7 +62,7 @@ const RevenueRecognized = ({ currency }) => {
         };
 
         fetchRevenueData();
-    }, [apiUrl, currency]);
+    }, [currency]);
 
     if (loading) return <div className="flex justify-center items-center h-full w-full">
         <div className="flex flex-col items-center">

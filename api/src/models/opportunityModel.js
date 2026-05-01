@@ -13,59 +13,72 @@ const Oppurtunity = sequelize.define(
       autoIncrement: true, // autoIncrement true for PK
     },
     OpRegion: {
+      field: 'op_region',
       type: DataTypes.STRING,
       allowNull: false,
     },
     OpUnit: {
+      field: 'op_unit',
       type: DataTypes.STRING,
       allowNull: false,
     },
     OpDescription: {
+      field: 'op_description',
       type: DataTypes.STRING,
       allowNull: false,
     },
     AssociatedWP: {
+      field: 'associated_w_p',
       type: DataTypes.STRING,
       allowNull: false,
     },
     CustomerContactPoint: {
+      field: 'customer_contact_point',
       type: DataTypes.STRING,
       allowNull: false,
     },
     Siglum: {
+      field: 'siglum',
       type: DataTypes.STRING,
       allowNull: true,
     },
     Program: {
+      field: 'program',
       type: DataTypes.STRING,
       allowNull: true,
     },
     Priority: {
+      field: 'priority',
       type: DataTypes.ENUM,
       values: ['High', 'Medium', 'Low', 'NA'],
       defaultValue: 'Low',
       allowNull: true,
     },
     opportunityType: {
+      field: 'opportunity_type',
       type: DataTypes.ENUM,
       values: ['External', 'Internal'],
       defaultValue: 'External',
     },
     Confidence: {
+      field: 'confidence',
       type: DataTypes.ENUM,
       values: ['High', 'Medium', 'Low', 'NA'],
       defaultValue: 'High',
       allowNull: true,
     },
     FirstContactDate: {
+      field: 'first_contact_date',
       type: DataTypes.DATE,
       allowNull: true,
     },
     LatestContactDate: {
+      field: 'latest_contact_date',
       type: DataTypes.DATE,
       allowNull: true,
     },
     NextContactDate: {
+      field: 'next_contact_date',
       type: DataTypes.DATE,
       allowNull: true,
     },
@@ -98,10 +111,12 @@ const Oppurtunity = sequelize.define(
       allowNull: true,
     },
     ExpectedDealSize: {
+      field: 'expected_deal_size',
       type: DataTypes.INTEGER,
       allowNull: true,
     },
     ExpectedTeamSize: {
+      field: 'expected_team_size',
       type: DataTypes.INTEGER,
       allowNull: true,
     },
@@ -119,25 +134,30 @@ const Oppurtunity = sequelize.define(
       type: Sequelize.INTEGER,
     },
     createdAt: {
+      field: 'created_at',
       type: Sequelize.DATE,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       allowNull: false,
     },
     updatedAt: {
+      field: 'updated_at',
       type: Sequelize.DATE,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       allowNull: false,
     },
     MarkedOpp: {
+      field: 'marked_opp',
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false,
     },
     MissionStartDate: {
+      field: 'mission_start_date',
       type: DataTypes.DATE,
       allowNull: true,
     },
     MissionEndDate: {
+      field: 'mission_end_date',
       type: DataTypes.DATE,
       allowNull: true,
     },
@@ -146,6 +166,7 @@ const Oppurtunity = sequelize.define(
       allowNull: true,
     },
     currencyCode: {
+      field: 'currency_code',
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'EUR',

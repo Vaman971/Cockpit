@@ -3,13 +3,13 @@ import Dropdown from "../../../components/Dropdown";
 import IconHorizontalDots from "../../../components/Icon/IconHorizontalDots";
 import ReactApexChart from "react-apexcharts";
 import numeral from "numeral";
-import axios from "axios";
+import api from "../../../axios";
 import { Spinner } from "flowbite-react";
 
 const PurchaseOrderByCategory = ({currency}) => {
     const [loading, setLoading] = useState(false);
     const [purchaseQuery, setPurchaseQuery] = useState("cluster");
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     const [chartData, setChartData] = useState({
         series: [],
         labels: [],
@@ -38,8 +38,8 @@ const PurchaseOrderByCategory = ({currency}) => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(
-                `${apiUrl}/finance/getPoPie?query=${purchaseQuery}`,
+            const response = await api.get(
+                `/finance/getPoPie?query=${purchaseQuery}`,
                 { 
                     params:{purchaseQuery,currency},
                     withCredentials: true }

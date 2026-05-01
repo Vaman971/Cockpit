@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../axios";
 import { Dropdown } from "flowbite-react";
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
@@ -11,7 +11,7 @@ import OpportunityProjectDetailModal from "./Opportunity_ProjectDetail";
 const OverviewPage = () => {
     const { opportunityId } = useParams();
     const navigate = useNavigate();
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     const [opportunityData, setOpportunityData] = useState(null);
     const [oppDescription, setoppDescription] = useState({})
     const [projectsData, setProjectsData] = useState([]);
@@ -91,7 +91,7 @@ const OverviewPage = () => {
     useEffect(() => {
         const fetchOpportunityData = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/oppurtunities/getOpp/${selectedOpportunity}`, { withCredentials: true });
+                const response = await api.get(`/oppurtunities/getOpp/${selectedOpportunity}`, { withCredentials: true });
                 const data = response.data;
                 setOpportunityData(data);
                 setoppDescription({ label: data?.OpDescription, value: data?.id });
@@ -104,7 +104,7 @@ const OverviewPage = () => {
         const fetchProjectData = async () => {
             try {
                 // First, fetch the opportunity data to check its status
-                const opportunityResponse = await axios.get(`${apiUrl}/oppurtunities/getOpp/${selectedOpportunity}`, { withCredentials: true });
+                const opportunityResponse = await api.get(`/oppurtunities/getOpp/${selectedOpportunity}`, { withCredentials: true });
                 const opportunityData = opportunityResponse.data;
 
                 // Check the opportunity's status
@@ -117,7 +117,7 @@ const OverviewPage = () => {
                 }
 
                 // Proceed to fetch projects only if the status is not in prospection or proposal
-                const projectResponse = await axios.get(`${apiUrl}/project/getProjOpp/${selectedOpportunity}`, { withCredentials: true });
+                const projectResponse = await api.get(`/project/getProjOpp/${selectedOpportunity}`, { withCredentials: true });
                 const data = projectResponse.data;
                 console.log(data);
 
@@ -136,7 +136,7 @@ const OverviewPage = () => {
 
         const fetchOpportunitiesList = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/oppurtunities/getOpp`, { withCredentials: true });
+                const response = await api.get(`/oppurtunities/getOpp`, { withCredentials: true });
                 setOpportunitiesList(Array.isArray(response.data) ? response.data : []);
             } catch (error) {
                 toast.error("Failed to fetch opportunities list");
@@ -147,11 +147,11 @@ const OverviewPage = () => {
         fetchOpportunitiesList();
         fetchProjectData();
 
-    }, [selectedOpportunity, apiUrl]);
+    }, [selectedOpportunity]);
 
     const fetchMissionData = async () => {
         try {
-            const missionResponse = await axios.get(`${apiUrl}/mission/getMissionByProjId/${selectedProject}`, { withCredentials: true });
+            const missionResponse = await api.get(`/mission/getMissionByProjId/${selectedProject}`, { withCredentials: true });
             const data = missionResponse.data;
 
 

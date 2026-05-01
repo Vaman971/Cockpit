@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
  
 const AddCustomer = ({ isOpen, closeModal }) => {
   const [formData, setFormData] = useState({});
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
  
  const handleSubmit = async (e) => { //restAPI Calling
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/customer/createCustomer`,
+      const res = await api.post(
+        `/customer/createCustomer`,
         formData,
         {
           headers: {

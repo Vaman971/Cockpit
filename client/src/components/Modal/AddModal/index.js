@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import countryCodes from "../../../assets/CountryCodes.json";
 import { toast } from "react-toastify"; // Import toast
-import axios from "axios";
+import api from "../../../axios";
 
 const AddModal = ({ isOpen, closeModal }) => {
   const [formData, setFormData] = useState({});
@@ -12,7 +12,7 @@ const AddModal = ({ isOpen, closeModal }) => {
   const [selectedConfidence, setSelectedConfidence] = useState("");
   const [selectedType, setSelectedType] = useState("External");
   const [cluster, setCluster] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const countryOptions = countryCodes.map((country) => ({
     label: country.name,
@@ -24,8 +24,8 @@ const AddModal = ({ isOpen, closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/oppurtunities/createOpp`,
+      const res = await api.post(
+        `/oppurtunities/createOpp`,
         formData,
         {
           headers: {
@@ -49,8 +49,8 @@ const AddModal = ({ isOpen, closeModal }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getusers`, { withCredentials: true })
+    api
+      .get(`/users/getusers`, { withCredentials: true })
       .then((response) => {
         const data = response.data;
         const filteredUsers = data.filter(
@@ -61,7 +61,7 @@ const AddModal = ({ isOpen, closeModal }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   if (!isOpen) {
     return null;

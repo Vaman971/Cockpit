@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 
 const ForcastUpdate = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({});
   const [forecastDate, setForecastDate] = useState("");
   const [country, setCountry] = useState("");
   const [cluster, setCluster] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/forecast/create`,
+      const res = await api.post(
+        `/forecast/create`,
         formData,
         {
           headers: {

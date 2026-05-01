@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import { DownloadIcon } from '@heroicons/react/solid';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 
 const RecentForecast = ({ currency }) => {
     const [forecasts, setForecasts] = useState([]);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     // Currency symbols map
     const currencySymbols = {
@@ -33,7 +33,7 @@ const RecentForecast = ({ currency }) => {
     useEffect(() => {
         const fetchForecasts = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/analytics/getLatestForecast`, {
+                const response = await api.get(`/analytics/getLatestForecast`, {
                     withCredentials: true,
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`, // Replace with your token management logic
@@ -56,7 +56,7 @@ const RecentForecast = ({ currency }) => {
 
     const handleExportCSV = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/analytics/getLatestForecast`, {
+            const response = await api.get(`/analytics/getLatestForecast`, {
                 withCredentials: true,
             });
 

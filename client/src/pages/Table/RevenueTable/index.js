@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import Select from "react-select";
 import ReactPaginate from "react-paginate";
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -28,7 +28,7 @@ const RevenueTable = () => {
   const [leaders, setLeaders] = useState([]);
   const [selectedExtensions, setSelectedExtensions] = useState([]);
   const [extension, setExtension] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const itemsPerPage = 20;
   // console.log(extension)
 
@@ -139,7 +139,7 @@ const RevenueTable = () => {
 
   const fetchLeaders = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/users/getusers`, {
+      const res = await api.get(`/users/getusers`, {
         withCredentials: true,
       });
       const responseData = res.data;
@@ -159,7 +159,7 @@ const RevenueTable = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/revenue/getRevenues`, {
+      const res = await api.get(`/revenue/getRevenues`, {
         withCredentials: true,
       });
       const responseData = res.data;

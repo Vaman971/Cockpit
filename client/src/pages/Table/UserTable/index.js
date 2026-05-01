@@ -4,7 +4,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReactPaginate from "react-paginate";
 import UserUpdate from "../../../components/Modal/Update/UserUpdateModal";
-import axios from "axios";
+import api from "../../../axios";
 import { useNavigate } from "react-router-dom";
 
 const UserTable = () => {
@@ -14,7 +14,7 @@ const UserTable = () => {
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [userTypeFilter, setUserTypeFilter] = useState("All"); // Default to show all users
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const navigate = useNavigate();
   const [currentItems, setCurrentItem] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -44,7 +44,7 @@ const UserTable = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/users/getusers`, {
+      const res = await api.get(`/users/getusers`, {
         withCredentials: true,
       });
       const responseData = res.data;

@@ -8,7 +8,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InvoiceModal from "../../components/Modal/InvoiceModal";
 import { Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import axios from "axios";
+import api from "../../axios";
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker'; // Import DatePicker
@@ -72,7 +72,7 @@ const MissionPage = () => {
     const [isCustomerEditModalOpen, setIsCustomerEditModalOpen] = useState(false);
     const [projectData, setProjectData] = useState(null);
     const [projectOptions, setProjectOptions] = useState([]);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     const navigate = useNavigate();
 
     const customStyles = {
@@ -149,8 +149,8 @@ const MissionPage = () => {
 
     const fetchData = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `${apiUrl}/invoice/getInvoiceByPoId/${poId}`,
+            const res = await api.get(
+                `/invoice/getInvoiceByPoId/${poId}`,
                 { withCredentials: true }
             );
             const responseData = res.data;
@@ -162,7 +162,7 @@ const MissionPage = () => {
         } catch (error) {
             console.log(error.message);
         }
-    }, [apiUrl, poId]);
+    }, [poId]);
 
     useEffect(() => {
         fetchData(); // Fetch data when component mounts or poId changes
@@ -201,8 +201,8 @@ const MissionPage = () => {
 
         if (shouldUpdate) {
             try {
-                const response = await axios.put(
-                    `${apiUrl}/invoice/updateInvoice/${editingInvoiceId}`,
+                const response = await api.put(
+                    `/invoice/updateInvoice/${editingInvoiceId}`,
                     updatedData,
                     { withCredentials: true }
                 );
@@ -256,7 +256,7 @@ const MissionPage = () => {
 
     const handleDeleteInvoice = async () => {
         try {
-            const res = await axios.delete(`${apiUrl}/invoice/deleteInvoiceById/${invoiceIdToDelete}`, { withCredentials: true });
+            const res = await api.delete(`/invoice/deleteInvoiceById/${invoiceIdToDelete}`, { withCredentials: true });
 
             setInvoiceData((prevInvoices) => prevInvoices.filter(invoice => invoice.invoiceIdToDelete !== invoiceIdToDelete));
 
@@ -306,8 +306,8 @@ const MissionPage = () => {
     };
     const handleDeleteUser = async () => {
         try {
-            const res = await axios.delete(
-                `${apiUrl}/teams/deleteTeamMembers/${teamIdToDelete}/${userIdToDelete}`,
+            const res = await api.delete(
+                `/teams/deleteTeamMembers/${teamIdToDelete}/${userIdToDelete}`,
                 { withCredentials: true }
             );
             const data = res.data;
@@ -329,8 +329,8 @@ const MissionPage = () => {
                 invoiceAmount: 0,
                 forecastAmount: 0,
             };
-            const res = await axios.post(
-                `${apiUrl}/invoice/createInvoiceByPoId/${poId}`,
+            const res = await api.post(
+                `/invoice/createInvoiceByPoId/${poId}`,
                 newInvoice,
                 {
                     withCredentials: true,
@@ -353,7 +353,7 @@ const MissionPage = () => {
 
     const fetchMissionTeams = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/teams/getTeam/${missionId}`, {
+            const response = await api.get(`/teams/getTeam/${missionId}`, {
                 withCredentials: true,
             });
             const teams = response.data;
@@ -372,7 +372,7 @@ const MissionPage = () => {
 
     const fetchMissionDetails = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/mission/getMission/${missionId}`, {
+            const response = await api.get(`/mission/getMission/${missionId}`, {
                 withCredentials: true,
             });
             const missionData = response.data;
@@ -395,7 +395,7 @@ const MissionPage = () => {
     const fetchAllProjects = async () => {
         try {
             // Make the API request to fetch all projects
-            const response = await axios.get(`${apiUrl}/project/getAllProjects`, {
+            const response = await api.get(`/project/getAllProjects`, {
                 withCredentials: true, // Include credentials if needed
             });
 
@@ -423,7 +423,7 @@ const MissionPage = () => {
     const fetchAllCustomers = async () => {
         try {
             // Make the API request to fetch all projects
-            const response = await axios.get(`${apiUrl}/customer/getCustomerByMissionId/${missionId}`, {
+            const response = await api.get(`/customer/getCustomerByMissionId/${missionId}`, {
                 withCredentials: true, // Include credentials if needed
             });
 
@@ -457,14 +457,14 @@ const MissionPage = () => {
         fetchMissionTeams();
         fetchAllCustomers();
 
-    }, [missionId, apiUrl, selectedMission, showTeamModal, teamModalOpen, teamMemberModal, isPoEditModalOpen, isCustomerEditModalOpen]);
+    }, [missionId, selectedMission, showTeamModal, teamModalOpen, teamMemberModal, isPoEditModalOpen, isCustomerEditModalOpen]);
 
 
     // Fetch all mission leaders
     useEffect(() => {
         const fetchMissionLeaders = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/users/getUserDetails`, {
+                const response = await api.get(`/users/getUserDetails`, {
                     withCredentials: true,
                 });
                 const data = response.data;
@@ -476,13 +476,13 @@ const MissionPage = () => {
             }
         };
         fetchMissionLeaders();
-    }, [apiUrl]);
+    }, []);
 
     const fetchMissionsForLeader = async () => {
         if (!selectedLeader) return;
         try {
             // console.log("Selected Leader ID:", selectedLeader);
-            const response = await axios.get(`${apiUrl}/users/getmissionDetails`, {
+            const response = await api.get(`/users/getmissionDetails`, {
                 params: { leader: selectedLeader },
                 withCredentials: true,
             });
@@ -506,14 +506,14 @@ const MissionPage = () => {
 
     useEffect(() => {
         fetchMissionsForLeader();
-    }, [selectedLeader, apiUrl]);
+    }, [selectedLeader]);
 
     useEffect(() => {
         const fetchInvoiceforPo = async () => {
             if (!poData) return;
             try {
 
-                const response = await axios.get(`${apiUrl}/invoice/getInvoiceByPoId/${poId}`, {
+                const response = await api.get(`/invoice/getInvoiceByPoId/${poId}`, {
                     withCredentials: true,
                 });
 
@@ -531,7 +531,7 @@ const MissionPage = () => {
             }
         };
         fetchInvoiceforPo();
-    }, [poId, apiUrl])
+    }, [poId])
 
 
     const handleSaveOccupancy = async () => {
@@ -542,8 +542,8 @@ const MissionPage = () => {
         }
         if (editingOccupancy !== originalOccupancy) {
             try {
-                const res = await axios.put(
-                    `${apiUrl}/teams/updateUserTeams/${editingTeamId}/${editingUserId}`,
+                const res = await api.put(
+                    `/teams/updateUserTeams/${editingTeamId}/${editingUserId}`,
                     { occupancy: editingOccupancy },
                     { withCredentials: true }
                 );

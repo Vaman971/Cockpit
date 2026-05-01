@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify'
-import axios from 'axios'
+import api from "../../../../axios";
 
 const ProjectUpdate = ({ isOpen, onClose, projectId }) => {
 
@@ -8,14 +8,14 @@ const ProjectUpdate = ({ isOpen, onClose, projectId }) => {
   const [projData, setProjData] = useState({});
   const [date, setDate] = useState('');
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
 
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${apiUrl}/project/update/${projectId}`,
+      const res = await api.put(
+        `/project/update/${projectId}`,
         formData,
         {
           headers: {
@@ -69,8 +69,8 @@ const ProjectUpdate = ({ isOpen, onClose, projectId }) => {
   }
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/project/getProj/${projectId}`, { withCredentials: true })
+    api
+      .get(`/project/getProj/${projectId}`, { withCredentials: true })
       .then((response) => {
         // console.log(response.data);
         setProjData(response.data);
@@ -79,7 +79,7 @@ const ProjectUpdate = ({ isOpen, onClose, projectId }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl, projectId]);
+  }, [projectId]);
 
   return (
     <>

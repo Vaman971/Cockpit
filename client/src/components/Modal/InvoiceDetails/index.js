@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import axios from "axios";
+import api from "../../../axios";
 import React, { useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import InvoiceModal from "../InvoiceModal";
@@ -28,12 +28,12 @@ const InvoiceDetails = ({ isOpen, onClose, poId, handlePurchaseDetails }) => {
   const [initialforecastInvoice, setinitialforecastInvoice] = useState(null);
   const [initialInvoicedAmount, setinitialInvoicedAmount] = useState(null);
  
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
  
   const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${apiUrl}/invoice/getInvoiceByPoId/${poId}`,
+      const res = await api.get(
+        `/invoice/getInvoiceByPoId/${poId}`,
         { withCredentials: true }
       );
       const responseData = res.data;
@@ -45,12 +45,12 @@ const InvoiceDetails = ({ isOpen, onClose, poId, handlePurchaseDetails }) => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl, poId]);
+  }, [poId]);
 
   const fetchPurchaseOrderData = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${apiUrl}/po/getAll`,
+      const res = await api.get(
+        `/po/getAll`,
         { withCredentials: true }
       );
       const responseData = res.data;
@@ -63,12 +63,12 @@ const InvoiceDetails = ({ isOpen, onClose, poId, handlePurchaseDetails }) => {
       console.log(error.message);
     }
 
-  }, [apiUrl]);
+  }, []);
  
   useEffect(() => {
     fetchData();
     fetchPurchaseOrderData();
-  }, [fetchData, fetchPurchaseOrderData, isInvoiceModelOpen, apiUrl, showModal, updatedMonth, updatedInvoice, updatedForecast]);
+  }, [fetchData, fetchPurchaseOrderData, isInvoiceModelOpen, showModal, updatedMonth, updatedInvoice, updatedForecast]);
 
   const getPoEndDate = (poId) => {
     const purchaseOrder = purchaseOrderData.find((po) => po.id === poId);
@@ -88,8 +88,8 @@ const InvoiceDetails = ({ isOpen, onClose, poId, handlePurchaseDetails }) => {
           forecastAmount: 0,
         };
       // Call API to create the invoice with the updated values
-      const res = await axios.post(
-        `${apiUrl}/invoice/createInvoiceByPoId/${poId}`,
+      const res = await api.post(
+        `/invoice/createInvoiceByPoId/${poId}`,
         newInvoice,
         { withCredentials: true }
       );
@@ -110,8 +110,8 @@ const InvoiceDetails = ({ isOpen, onClose, poId, handlePurchaseDetails }) => {
  
   const handleDeleteInvoice = async () => {
     try {
-      const res = await axios.delete(
-        `${apiUrl}/invoice/deleteInvoiceById/${invoiceIdToDelete}`,
+      const res = await api.delete(
+        `/invoice/deleteInvoiceById/${invoiceIdToDelete}`,
         { withCredentials: true }
       );
  
@@ -175,8 +175,8 @@ const handleBack = (e)=>{
  
     if (shouldUpdate) {
       try {
-        const response = await axios.put(
-          `${apiUrl}/invoice/updateInvoice/${editingInvoiceId}`,
+        const response = await api.put(
+          `/invoice/updateInvoice/${editingInvoiceId}`,
           updatedData,
           { withCredentials: true }
         );

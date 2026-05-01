@@ -13,10 +13,28 @@ const ExtensionModel = sequelize.define(
     // table name kept for DB compat
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true, allowNull: false },
     description: { type: DataTypes.STRING, allowNull: true },
-    revenueProjection: { type: DataTypes.DECIMAL(10, 2), allowNull: true },
-    projectLeader: { type: DataTypes.INTEGER, allowNull: true, defaultValue: null },
-    currencyCode: { type: DataTypes.STRING, allowNull: false, defaultValue: 'EUR' },
-    actualRevenue: { type: DataTypes.DECIMAL(10, 2), allowNull: true },
+    revenueProjection: {
+      field: 'revenue_projection',
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    projectLeader: {
+      field: 'project_leader',
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
+    currencyCode: {
+      field: 'currency_code',
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'EUR',
+    },
+    actualRevenue: {
+      field: 'actual_revenue',
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
     cluster: { type: DataTypes.STRING, allowNull: true, defaultValue: 'Other' },
     extensionStartDate: {
       type: DataTypes.DATEONLY,
@@ -38,7 +56,7 @@ const ExtensionModel = sequelize.define(
       allowNull: false,
     },
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    createdAt: { type: DataTypes.DATEONLY, allowNull: true },
+    createdAt: { field: 'created_at', type: DataTypes.DATEONLY, allowNull: true },
     likeliness: {
       type: DataTypes.ENUM('High', 'Medium', 'Low'),
       defaultValue: 'Low',

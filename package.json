@@ -20,7 +20,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "globals": "^17.5.0"
   },
   "engines": {
     "node": ">=18.0.0",

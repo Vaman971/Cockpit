@@ -90,9 +90,9 @@ const getRevenueData = async (req, res, next) => {
 
     let extensionSumThisQuarter = await ExtentionInvoice.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('invoiceDate')), 'year'],
+        [sequelize.fn('YEAR', sequelize.col('invoice_date')), 'year'],
         [
-          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenueProjection')),
+          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenue_projection')),
           'totalExtentionRevenue',
         ],
         'currencyCode',

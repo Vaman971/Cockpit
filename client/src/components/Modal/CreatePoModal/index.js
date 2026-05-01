@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 import Select from "react-select";
 
 const PoCreateModal = ({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({});
     const [missionProj, setMissionProj] = useState(null);
     const [missionData, setMissionData] = useState(null);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(
-                `${apiUrl}/po/create`,
+            const res = await api.post(
+                `/po/create`,
                 formData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -35,15 +35,15 @@ const PoCreateModal = ({ isOpen, onClose }) => {
     };
 
     useEffect(() => {
-        axios
-            .get(`${apiUrl}/mission/getAll`, { withCredentials: true })
+        api
+            .get(`/mission/getAll`, { withCredentials: true })
             .then((response) => {
                 setMissionData(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching users:", error);
             });
-    }, [apiUrl]);
+    }, []);
 
     const handleMissionChange = (selectedOption) => {
         setMissionProj(selectedOption);

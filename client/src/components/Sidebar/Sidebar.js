@@ -14,7 +14,7 @@ import {
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import LogoutIcon from "@mui/icons-material/Logout";
-import axios from "axios";
+import api from "../../axios";
 import { NavLink, useLocation } from "react-router-dom";
 import IconCashBanknotes from "../Icon/IconCashBanknotes";
 import IconCreditCard from "../Icon/IconCreditCard";
@@ -27,7 +27,7 @@ import IconMinus from "../Icon/IconMinus";
 const Sidebar = ({ showSidebar, handleSidebar }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [currentMenu, setCurrentMenu] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -64,7 +64,7 @@ const Sidebar = ({ showSidebar, handleSidebar }) => {
 
   const handleSignOut = async () => {
     try {
-      const res = await axios.post(`${apiUrl}/users/signout`);
+      const res = await api.post(`/users/signout`);
       const data = res.data;
       if (data.success === false) {
         console.log(data.message);

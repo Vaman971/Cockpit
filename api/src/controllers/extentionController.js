@@ -76,11 +76,11 @@ const getExtention = async (req, res) => {
         { model: Project, as: 'projectExtention' },
         { model: User, as: 'assignedProjectLeader' },
       ],
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
     });
     res.json(extentionList);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -102,7 +102,7 @@ const getExtentionById = async (req, res) => {
 
     res.json(extention);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -166,7 +166,7 @@ const updateExtention = async (req, res) => {
 
     res.json({ success: true, message: 'Extention updated successfully' });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -179,7 +179,7 @@ const getExtentionInvoices = async (req, res) => {
     });
     res.json(invoices);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

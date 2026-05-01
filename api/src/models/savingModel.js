@@ -13,11 +13,13 @@ const savingModel = sequelize.define(
       field: 'id',
     },
     savingDate: {
+      field: 'saving_date',
       type: DataTypes.DATEONLY,
       allowNull: true,
       defaultValue: null,
     },
     savingAmount: {
+      field: 'saving_amount',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
       defaultValue: null,

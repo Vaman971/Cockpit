@@ -7,7 +7,7 @@ import IconHorizontalDots from "../../components/Icon/IconHorizontalDots";
 import IconDollarSign from "../../components/Icon/IconDollarSign";
 import IconCashBanknotes from "../../components/Icon/IconCashBanknotes";
 import IconEye from "../../components/Icon/IconEye";
-import axios from "axios";
+import api from "../../axios";
 
 const Finance = () => {
   const [data, setData] = useState([]);
@@ -71,7 +71,7 @@ const Finance = () => {
   const [plannedSum, setPlannedSum] = useState(0);
   const [revenueDate, setRevenueDate] = useState('');
   const {currentUser} = useSelector((state) => state.user);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const [loading] = useState(false);
 
   useEffect(() => {
@@ -105,7 +105,6 @@ const Finance = () => {
     forecastQuery,
     forecastCluster,
     revenueQuery,
-    apiUrl,
     purchaseQuery,
     region,
     forecastRegion,
@@ -113,7 +112,7 @@ const Finance = () => {
 
   const fetchDeliveryData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getDeliveryData`, {
+      const res = await api.get(`/analytics/getDeliveryData`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -147,7 +146,7 @@ const Finance = () => {
 
   const fetchSalesData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getSalesData`, {
+      const res = await api.get(`/analytics/getSalesData`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -182,7 +181,7 @@ const Finance = () => {
 
   const fetchPlannedData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getPlannedData`, {
+      const res = await api.get(`/analytics/getPlannedData`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -217,7 +216,7 @@ const Finance = () => {
 
   const fetchActualRevenue = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getActaulData`, {
+      const res = await api.get(`/analytics/getActaulData`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -252,7 +251,7 @@ const Finance = () => {
 
   const fetchPlannedRevenue = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getForecastData`, {
+      const res = await api.get(`/analytics/getForecastData`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -281,7 +280,7 @@ const Finance = () => {
   };
 
   const fetchprofileData = async () => {
-    const res = await axios.get(`${apiUrl}/profile/getProfiles`, {
+    const res = await api.get(`/profile/getProfiles`, {
       withCredentials: true,
     });
     const data = res.data;
@@ -297,8 +296,8 @@ const Finance = () => {
   };
 
   const fetchFinanceGraphData = async () => {
-    const res = await axios.get(
-      `${apiUrl}/analytics/getCummulativeGraph?granularity=${query}&cluster=${graphCluster}&region=${region}`,
+    const res = await api.get(
+      `/analytics/getCummulativeGraph?granularity=${query}&cluster=${graphCluster}&region=${region}`,
       {
         withCredentials: true,
       }
@@ -318,8 +317,8 @@ const Finance = () => {
 
   const fetchPurchaseBarData = async () => {
     try {
-      const purchaseData = await axios.get(
-        `${apiUrl}/analytics/getPurchaseAmountByMissionLeader`,
+      const purchaseData = await api.get(
+        `/analytics/getPurchaseAmountByMissionLeader`,
         { withCredentials: true }
       );
 
@@ -337,7 +336,7 @@ const Finance = () => {
 
   const fetchPurchaseCardData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getPurchaseAmount`, {
+      const res = await api.get(`/analytics/getPurchaseAmount`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -356,7 +355,7 @@ const Finance = () => {
 
   const fetchInvoiceCardData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getInvoiceSum`, {
+      const res = await api.get(`/analytics/getInvoiceSum`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -375,7 +374,7 @@ const Finance = () => {
 
   const fetchLatestTablePo = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/po/getLatestPo`, {
+      const res = await api.get(`/po/getLatestPo`, {
         withCredentials: true,
       });
       const poData = res.data;
@@ -387,7 +386,7 @@ const Finance = () => {
 
   const fetchLatestTableForecast = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/analytics/getLatestForecast`, {
+      const res = await api.get(`/analytics/getLatestForecast`, {
         withCredentials: true,
       });
       const data = res.data;
@@ -402,8 +401,8 @@ const Finance = () => {
   };
 
   const fetchPurchaseData = async () => {
-    const res = await axios.get(
-      `${apiUrl}/analytics/getTotalPurchase?query=${purchaseQuery}`,
+    const res = await api.get(
+      `/analytics/getTotalPurchase?query=${purchaseQuery}`,
       {
         withCredentials: true,
       }
@@ -424,7 +423,7 @@ const Finance = () => {
   };
 
   // const fetchRecentInvoiceData = async () => {
-  //   const res = await axios.get(`${apiUrl}/analytics/getLatestInvoiceAmount`, {
+  //   const res = await api.get(`/analytics/getLatestInvoiceAmount`, {
   //     withCredentials: true,
   //   });
   //   const data = res.data;
@@ -442,7 +441,7 @@ const Finance = () => {
   // };
 
   const fetchPurchaseOrderData = async () => {
-    const res = await axios.get(`${apiUrl}/analytics/getLatestPurchaseOrder`, {
+    const res = await api.get(`/analytics/getLatestPurchaseOrder`, {
       withCredentials: true,
     });
     const data = res.data;
@@ -455,7 +454,7 @@ const Finance = () => {
   };
 
   const fetchPurchaseGraphData = async () => {
-    const res = await axios.get(`${apiUrl}/analytics/getPurchaseStats`, {
+    const res = await api.get(`/analytics/getPurchaseStats`, {
       withCredentials: true,
     });
     const data = res.data;
@@ -474,7 +473,7 @@ const Finance = () => {
   };
 
   const fetchForecastData = async () => {
-    const res = await axios.get(`${apiUrl}/analytics/getForecastSum`, {
+    const res = await api.get(`/analytics/getForecastSum`, {
       withCredentials: true,
     });
     const data = res.data;
@@ -488,7 +487,7 @@ const Finance = () => {
   };
 
   const fetchRevenueData = async () => {
-    const res = await axios.get(`${apiUrl}/analytics/getRevenueSum`, {
+    const res = await api.get(`/analytics/getRevenueSum`, {
       withCredentials: true,
     });
     const data = res.data;
@@ -502,8 +501,8 @@ const Finance = () => {
   };
 
   const fetchForecastGraph = async () => {
-    const res = await axios.get(
-      `${apiUrl}/analytics/getForecast?granularity=${forecastQuery}&cluster=${forecastCluster}&region=${forecastRegion}`,
+    const res = await api.get(
+      `/analytics/getForecast?granularity=${forecastQuery}&cluster=${forecastCluster}&region=${forecastRegion}`,
       {
         withCredentials: true,
       }
@@ -524,8 +523,8 @@ const Finance = () => {
   };
 
   const fetchRevenueByCategory = async () => {
-    const res = await axios.get(
-      `${apiUrl}/analytics/getRevenueByCategory?query=${revenueQuery}`,
+    const res = await api.get(
+      `/analytics/getRevenueByCategory?query=${revenueQuery}`,
       {
         withCredentials: true,
       }

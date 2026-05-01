@@ -105,7 +105,7 @@ const getLatestOpportunities = async (req, res, next) => {
   try {
     const opportunities = await Oppurtunities.findAll({
       limit: 5,
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
       include: [
         { model: User, as: 'ledByUser' },
         { model: User, as: 'supportedByUser' },

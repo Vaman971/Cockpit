@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 import ReactPaginate from "react-paginate";
-import axios from "axios";
+import api from "../../axios";
 import ArticleIcon from '@mui/icons-material/Article';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import SharePointModal from "../../components/Modal/SharePointModal";
@@ -14,7 +14,7 @@ const SharePointPage = () => {
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 9;
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const [sharepointLink, setSharepointLink] = useState(null);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [missionId, setMissionId] = useState(null);
@@ -23,7 +23,7 @@ const SharePointPage = () => {
   // Fetch all mission data
   const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get(`${apiUrl}/mission/getAll`, {
+      const res = await api.get(`/mission/getAll`, {
         withCredentials: true,
       });
       const responseData = res.data;
@@ -39,7 +39,7 @@ const SharePointPage = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, [apiUrl]);
+  }, []);
  
   useEffect(() => {
     fetchData();
@@ -86,7 +86,7 @@ const SharePointPage = () => {
   useEffect(() => {
     const fetchSharepointLink = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/sharePoint/getSharepointLinkById/${missionId}`, {
+        const res = await api.get(`/sharePoint/getSharepointLinkById/${missionId}`, {
           withCredentials: true,
         });
         setSharepointLink(res.data.link);
@@ -98,7 +98,7 @@ const SharePointPage = () => {
     if (missionId) {
       fetchSharepointLink();
     }
-  }, [missionId, apiUrl]);
+  }, [missionId]);
  
   return (
     <div className="bg-white rounded-lg shadow-md p-6">

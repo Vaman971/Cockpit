@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import ReactPaginate from "react-paginate";
-import axios from "axios";
+import api from "../../../axios";
 import { toast } from "react-toastify";
 import AddCustomer from "../../../components/Modal/CustomerModal";
 import CustomerUpdateModal from "../../../components/Modal/Update/CustomerUpdateModal";
@@ -15,7 +15,7 @@ const CustomerTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [userTypeFilter, setUserTypeFilter] = useState("All"); // Default to show all users
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const [currentItems, setCurrentItem] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setpageCount] = useState(0);
@@ -36,7 +36,7 @@ const CustomerTable = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/customer/getAllCustomers`, {
+      const res = await api.get(`/customer/getAllCustomers`, {
         withCredentials: true,
       });
       const responseData = res.data;
@@ -72,7 +72,7 @@ const CustomerTable = () => {
   }
   useEffect(() => {
     fetchData();
-  }, [apiUrl, showModal, isActionModalOpen, customerModal, currentPage, searchQuery, userTypeFilter]);
+  }, [showModal, isActionModalOpen, customerModal, currentPage, searchQuery, userTypeFilter]);
 
   const toggleActionModal = (id) => {
     setCustomerId(id);

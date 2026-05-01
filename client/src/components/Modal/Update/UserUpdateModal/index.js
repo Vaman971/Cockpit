@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 
 const UserUpdate = ({ isOpen, onClose, userId }) => {
   const [formData, setFormData] = useState({});
@@ -8,13 +8,13 @@ const UserUpdate = ({ isOpen, onClose, userId }) => {
   const [userType, setUsertype] = useState("");
   const [rate, setRate] = useState(0);
   const [active, setActive] = useState(true);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${apiUrl}/users/updateUser/${userId}`,
+      const res = await api.put(
+        `/users/updateUser/${userId}`,
         formData,
         {
           headers: {
@@ -38,8 +38,8 @@ const UserUpdate = ({ isOpen, onClose, userId }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getUserbyId/${userId}`, { withCredentials: true })
+    api
+      .get(`/users/getUserbyId/${userId}`, { withCredentials: true })
       .then((response) => {
         // console.log(response.data.active);
         setUserData(response.data);
@@ -48,7 +48,7 @@ const UserUpdate = ({ isOpen, onClose, userId }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl, userId]);
+  }, [userId]);
 
   const handleChange = (e) => {
     if (e.target.id === "user_type") {

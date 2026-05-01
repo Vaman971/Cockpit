@@ -1,7 +1,7 @@
 import ReactApexChart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState} from "react";
-import axios from "axios";
+import api from "../../../axios";
 import Dropdown from '../../../components/Dropdown';
 import IconHorizontalDots from '../../../components/Icon/IconHorizontalDots';
 import { Spinner } from 'flowbite-react';
@@ -21,7 +21,7 @@ const ExtensionLikeliness = ({currency}) => {
     const [forecastCluster, setForecastCluster] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const formatMonthYearCustom = (monthString) => {
         const months = [
@@ -163,7 +163,7 @@ const ExtensionLikeliness = ({currency}) => {
             setLoading(true);
             try {
 
-                const response = await axios.get(`${apiUrl}/newFinance/getRevenueData?cluster=${forecastCluster}&region=${forecastRegion}&currency=${currency}`, { withCredentials: true });
+                const response = await api.get(`/newFinance/getRevenueData?cluster=${forecastCluster}&region=${forecastRegion}&currency=${currency}`, { withCredentials: true });
                 const data = response.data;
 
                 const months = data.map((entry) => formatMonthYearCustom(entry.month));

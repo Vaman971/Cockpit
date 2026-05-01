@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from "../../axios";
 import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
  
@@ -6,7 +6,7 @@ const CustomerDetailsPage = () => {
   const [profileData, setProfileData] = useState([]);
   const [missionData, setMissionData] = useState([]);
   const [missions, setMissions] = useState([]);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const { id } = useParams();
   const navigate = useNavigate();
  
@@ -18,7 +18,7 @@ const CustomerDetailsPage = () => {
     useEffect(() => {
         const fetchMissionData = async () => {
             try {
-                const res = await axios.get(`${apiUrl}/customer/getMissionByCustomerId/${id}`, {
+                const res = await api.get(`/customer/getMissionByCustomerId/${id}`, {
                     withCredentials: true,
                 });
                 const customerData = res.data;
@@ -33,7 +33,7 @@ const CustomerDetailsPage = () => {
             }
         };
         fetchMissionData();
-    }, [apiUrl, id]);
+    }, [id]);
 
 
     useEffect(() => {
@@ -41,7 +41,7 @@ const CustomerDetailsPage = () => {
         const updatedList = [];
         for (const mission of profileData) {
             try {
-                const res = await axios.get(`${apiUrl}/mission/getMission/${mission.id}`, {
+                const res = await api.get(`/mission/getMission/${mission.id}`, {
                     withCredentials: true,
                 });
                 const leaderName = res?.data?.assignedMissionCards?.username;
@@ -55,7 +55,7 @@ const CustomerDetailsPage = () => {
         };
 
         fetchLeaderName();
-    }, [apiUrl, profileData]);
+    }, [profileData]);
 
   return (
       <div className="pt-5">

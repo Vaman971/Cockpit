@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 
 const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
   const [formData, setFormData] = useState({});
@@ -17,7 +17,7 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
   const [missionType, setMissionType] = useState("");
   const [customers, setCustomers] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState([]);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +26,8 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
     let ans = null;
     if (formData) {
     try {
-      res = await axios.put(
-        `${apiUrl}/mission/update/${missionId}`,
+      res = await api.put(
+        `/mission/update/${missionId}`,
         formData,
         {
           headers: {
@@ -45,8 +45,8 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
     }
     if (selectedCustomerId && selectedCustomerId.length > 0) {
     try {
-      ans = await axios.post(
-        `${apiUrl}/mission/assignCustomerToMission/${missionId}`,
+      ans = await api.post(
+        `/mission/assignCustomerToMission/${missionId}`,
          {customerIds: selectedCustomerId},
         {
           headers: {
@@ -72,8 +72,8 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getusers`, { withCredentials: true })
+    api
+      .get(`/users/getusers`, { withCredentials: true })
       .then((response) => {
         const data = response.data;
         const filteredUsers = data.filter(user => user.user_type === "Admin" || user.user_type === "Leader");
@@ -82,11 +82,11 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/project/getProj`, { withCredentials: true })
+    api
+      .get(`/project/getProj`, { withCredentials: true })
       .then((response) => {
         // console.log(response.data);
         setProjData(response.data);
@@ -94,11 +94,11 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/mission/getMission/${missionId}`, {
+    api
+      .get(`/mission/getMission/${missionId}`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -109,10 +109,10 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl, missionId]);
+  }, [missionId]);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/customer/getAllCustomers`,
+    api.get(`/customer/getAllCustomers`,
       {
         withCredentials: true
 
@@ -120,7 +120,7 @@ const MissUpdate = ({ isOpen, onClose, missionId, isNewMission }) => {
       .then((res) =>
         setCustomers(res.data))
       .catch((err) => console.error("Error fetching customers:", err));
-  }, [apiUrl]);
+  }, []);
 
   const formatDate = (dateString) => {
     if (dateString === null) {

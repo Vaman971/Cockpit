@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 
 const ExpenseUpdate = ({ isOpen, onClose, financeId }) => {
   const [formData, setFormData] = useState({});
   const [data, setData] = useState({});
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`${apiUrl}/expense/updateExpense/${financeId}`, formData, {
+      const res = await api.put(`/expense/updateExpense/${financeId}`, formData, {
         withCredentials: true,
       });
       const data = res.data;
@@ -33,7 +33,7 @@ const ExpenseUpdate = ({ isOpen, onClose, financeId }) => {
 
   useEffect(() => {
     // Fetch expense data by ID and populate form fields
-    axios.get(`${apiUrl}/expense/getExpense/${financeId}`,{withCredentials: true})
+    api.get(`/expense/getExpense/${financeId}`,{withCredentials: true})
       .then((response) => {
         const data = response.data;
         setData(data);

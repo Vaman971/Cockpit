@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import IconEye from '../../../components/Icon/IconEye';
 import numeral from 'numeral';
 import { Spinner } from 'flowbite-react';
@@ -11,15 +11,15 @@ const RevenueProjection = ({ currency }) => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     useEffect(() => {
         const fetchRevenueProjectionInfo = async () => {
             try {
                 setLoading(true);
                 const token = localStorage.getItem('authToken'); // Assuming token is stored in localStorage
-                const response = await axios.get(
-                    `${apiUrl}/finance/getRevenueProjectionInfo`,
+                const response = await api.get(
+                    `/finance/getRevenueProjectionInfo`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ const RevenueProjection = ({ currency }) => {
         };
 
         fetchRevenueProjectionInfo();
-    }, [apiUrl, currency]);
+    }, [currency]);
 
     if (loading) return <div className="flex justify-center items-center h-full w-full">
         <div className="flex flex-col items-center">

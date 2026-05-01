@@ -7,7 +7,9 @@ import api from "../../../axios";
 import { projectService } from "../../../services/projectService";
 import { missionService } from "../../../services/missionService";
 import { Dropdown } from "flowbite-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProjects, selectAllProjects, selectProjectStatus } from "../../../redux/project/projectSlice";
+import { fetchMissions, selectAllMissions, selectMissionStatus } from "../../../redux/mission/missionSlice";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import { FaSortDown } from 'react-icons/fa';
@@ -15,7 +17,12 @@ import { FaSortUp } from 'react-icons/fa';
 
 const Table = () => {
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
+  const allProjects = useSelector(selectAllProjects);
+  const projectStatus = useSelector(selectProjectStatus);
+  const allMissions = useSelector(selectAllMissions);
+  const missionStatus = useSelector(selectMissionStatus);
   const [projectId, setProjectId] = useState(null);
   const [data, setData] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null })
@@ -137,96 +144,76 @@ const Table = () => {
 
 
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await projectService.getAll();
-      const responseData = res.data;
-
-      if (responseData.success === false) {
-        console.log(responseData.message);
-      } else {
-        let filteredData = responseData.filter(
-          (item) => item.ProjOpp.status === "Won"
-        );
-
-        // Apply search filter if query exists
-        if (query) {
-          filteredData = filteredData.filter((item) =>
-            item.project_title.toLowerCase().includes(query.toLowerCase())
-          );
-          setData(filteredData);
-        }
-        if (selectedClusters && selectedClusters.length > 0) {
-          filteredData = filteredData.filter((item) =>
-            selectedClusters.includes(item.cluster)
-          );
-        }
-        if (selectedRegion && selectedRegion.length > 0) {
-          filteredData = filteredData.filter((item) =>
-            selectedRegion.some((region) => region.value === item.region)
-          );
-        }
-        if (selectedStatus && selectedStatus.length > 0) {
-          filteredData = filteredData.filter((item) =>
-            selectedStatus.some((status) => status.value === item.status)
-          );
-        }
-
-        if (sortConfig.key) {
-          filteredData.sort((a, b) => {
-            const aVal = a[sortConfig.key];
-            const bVal = b[sortConfig.key];
-
-            if (typeof aVal === 'string' && typeof bVal === 'string') {
-              return sortConfig.direction === 'asc'
-                ? aVal.localeCompare(bVal)
-                : bVal.localeCompare(aVal);
-            }
-
-            return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
-          });
-        }
-
-        setData(filteredData);
-      }
-    } catch (error) {
-      console.log(error.message);
+  useEffect(() => {
+    if (projectStatus === 'idle' || !isActionModalOpen) {
+      dispatch(fetchProjects());
     }
-  }, [query, selectedClusters, selectedRegion, selectedStatus, sortConfig]);
-
-  const fetchMissionData = useCallback(async () => {
-    // Fetch mission data
-    try {
-      const res = await missionService.getAll();
-      const data = res.data;
-
-      if (data.success === false) {
-        console.log(data.message);
-      } else {
-        setMissionData(data);
-      }
-    } catch (error) {
-      console.log(error.message);
+    if (missionStatus === 'idle' || !isActionModalOpen) {
+      dispatch(fetchMissions());
     }
-  }, []);
+  }, [dispatch, projectStatus, missionStatus, isActionModalOpen]);
+
+  useEffect(() => {
+    setMissionData(allMissions);
+  }, [allMissions]);
+
+  useEffect(() => {
+    let filteredData = allProjects.filter(
+      (item) => item?.ProjOpp?.status === "Won"
+    );
+
+    if (query) {
+      filteredData = filteredData.filter((item) =>
+        item.project_title.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    if (selectedClusters && selectedClusters.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        selectedClusters.includes(item.cluster)
+      );
+    }
+    if (selectedRegion && selectedRegion.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        selectedRegion.some((region) => region.value === item.region)
+      );
+    }
+    if (selectedStatus && selectedStatus.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        selectedStatus.some((status) => status.value === item.status)
+      );
+    }
+
+    if (sortConfig.key) {
+      filteredData.sort((a, b) => {
+        const aVal = a[sortConfig.key];
+        const bVal = b[sortConfig.key];
+
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          return sortConfig.direction === 'asc'
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal);
+        }
+
+        return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+    }
+
+    setData(filteredData);
+  }, [allProjects, query, selectedClusters, selectedRegion, selectedStatus, sortConfig]);
 
   const fetchUserOptions = useCallback(async () => {
     try {
       const res = await api.get("/users/getusers");
       const data = res.data;
-      //console.log(data)
       setUser(data);
-
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   }, []);
 
   useEffect(() => {
-    fetchData();
-    fetchMissionData();
     fetchUserOptions();
-  }, [isActionModalOpen, currentPage, query, selectedClusters, selectedRegion, selectedStatus, fetchData, fetchMissionData, fetchUserOptions]);
+  }, [fetchUserOptions]);
 
   // Export data as CSV
   const handleExportCSV = async () => {

@@ -1,10 +1,10 @@
-import axios from "axios";
+import api from "../../../axios";
 import { Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useEffect, useState } from "react";
 
 const UserDetails = ({ id, isOpen, closeModal }) => {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const [data, setData] = useState({});
   const [profileImage, setProfileImage] = useState(null);
 
@@ -26,8 +26,8 @@ const UserDetails = ({ id, isOpen, closeModal }) => {
   useEffect(() => {
     const getProfileData = async () => {
       try {
-        const res = await axios.get(
-          `${apiUrl}/profile/getSingleProfileDetails/${id}`,
+        const res = await api.get(
+          `/profile/getSingleProfileDetails/${id}`,
           { withCredentials: true }
         );
         const profileData = res.data;
@@ -41,7 +41,7 @@ const UserDetails = ({ id, isOpen, closeModal }) => {
       }
     };
     getProfileData();
-  }, [apiUrl, id]);
+  }, [id]);
 
   return (
     <>

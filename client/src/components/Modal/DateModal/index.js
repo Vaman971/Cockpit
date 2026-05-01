@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import axios from "axios";
+import api from "../../../axios";
 import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 
@@ -8,16 +8,16 @@ const DataModal = ({ isOpen, onClose, opportunityId }) => {
   // const [user, setUser] = useState([]);
   const [data, setData] = useState({});
   // console.log(data.LastContactDate)
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   // console.log(data);
   useEffect(() => {
     fetchData();
-  }, [apiUrl]);
+  }, []);
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/oppurtunities/getOpp/${opportunityId}`, { withCredentials: true });
+      const res = await api.get(`/oppurtunities/getOpp/${opportunityId}`, { withCredentials: true });
       const responseData = res.data;
 
       if (responseData.success === false) {
@@ -35,7 +35,7 @@ const DataModal = ({ isOpen, onClose, opportunityId }) => {
 
   // const fetchUserOptions = async () => {
   //   try {
-  //     const res = await axios.get(`${apiUrl}/users/getusers`, { withCredentials: true });
+  //     const res = await api.get(`/users/getusers`, { withCredentials: true });
   //     setUser(res.data);
   //   } catch (error) {
   //     console.error("Error fetching users:", error);

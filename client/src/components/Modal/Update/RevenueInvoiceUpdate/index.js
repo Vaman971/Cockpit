@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 
 const RevenueInvoiceUpdate = ({ isOpen, handleClose, invoiceId}) => {
   const [formData, setFormData] = useState({});
@@ -10,13 +10,13 @@ const RevenueInvoiceUpdate = ({ isOpen, handleClose, invoiceId}) => {
   const [plannedInvoice, setPlannedInvoice] = useState(0);
   const [actualInvoice, setActualInvoice] = useState(0);
   // const [forecastInvoice, setForecastInvoice] = useState(0);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${apiUrl}/revenueInvoice/updateRevenueInvoice/${invoiceId}`,
+      const res = await api.put(
+        `/revenueInvoice/updateRevenueInvoice/${invoiceId}`,
         formData,
         {
           withCredentials: true,
@@ -63,7 +63,7 @@ const RevenueInvoiceUpdate = ({ isOpen, handleClose, invoiceId}) => {
   useEffect(() => {
     // Fetch invoice data by ID and populate form fields
     // Example:
-    axios.get(`${apiUrl}/revenueInvoice/getRevenueInvoice/${invoiceId}`,{withCredentials: true})
+    api.get(`/revenueInvoice/getRevenueInvoice/${invoiceId}`,{withCredentials: true})
       .then((response) => {
         const data = response.data;
         setData(data);
@@ -71,7 +71,7 @@ const RevenueInvoiceUpdate = ({ isOpen, handleClose, invoiceId}) => {
       .catch((error) => {
         console.error("Error fetching invoice:", error);
       });
-  }, [isOpen,invoiceId,apiUrl]);
+  }, [isOpen,invoiceId]);
 
 
   return (

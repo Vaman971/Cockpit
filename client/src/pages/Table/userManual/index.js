@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import { saveAs } from "file-saver";
@@ -19,7 +19,7 @@ const UserManual = () => {
     const [selectedDesignation, setSelectedDesignation] = useState([]);
     const [filteredOccupancy, setFilteredOccupancy] = useState([0, 100]);
     const navigate = useNavigate();
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     const itemsPerPage = 20;
 
     const regionOptions = [
@@ -134,7 +134,7 @@ const UserManual = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.get(`${apiUrl}/profile/getProfileDetails`, {
+            const res = await api.get(`/profile/getProfileDetails`, {
                 withCredentials: true,
             });
             const responseData = res.data;

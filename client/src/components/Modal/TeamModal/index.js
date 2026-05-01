@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import { toast } from "react-toastify";
 import Pill from "./pill";
 
@@ -12,7 +12,7 @@ const AddTeam = ({ isOpen, closeModal, missionId }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUserSet, setSelectedUserSet] = useState(new Set());
   const [activeSuggestion, setActiveSuggestion] = useState(0);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -23,8 +23,8 @@ const AddTeam = ({ isOpen, closeModal, missionId }) => {
         return;
       }
       try {
-        const res = await axios.get(
-          `${apiUrl}/profile/getAll?username=${searchTerm}`,
+        const res = await api.get(
+          `/profile/getAll?username=${searchTerm}`,
           { withCredentials: true }
         );
         const profileData = res.data;
@@ -43,7 +43,7 @@ const AddTeam = ({ isOpen, closeModal, missionId }) => {
   useEffect(() => {
     const getTeamData = async () => {
       try {
-        const resp = await axios.get(`${apiUrl}/teams/getTeam/${missionId}`, {
+        const resp = await api.get(`/teams/getTeam/${missionId}`, {
           withCredentials: true,
         });
         const teamData = resp.data;
@@ -68,8 +68,8 @@ const AddTeam = ({ isOpen, closeModal, missionId }) => {
         active: true,
       }));
 
-      const res = await axios.post(
-        `${apiUrl}/teams/createTeam/${missionId}`,
+      const res = await api.post(
+        `/teams/createTeam/${missionId}`,
         {
           team_name: formData.team_name,
           active: formData.active,

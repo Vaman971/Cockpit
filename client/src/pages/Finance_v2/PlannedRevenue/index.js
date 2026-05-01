@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import IconEye from '../../../components/Icon/IconEye';
-import axios from 'axios';
+import api from "../../../axios";
 import numeral from 'numeral';
 import { Spinner } from 'flowbite-react';
 
@@ -12,7 +12,7 @@ const PlannedRevenue = ({ currency }) => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     useEffect(() => {
         const fetchForecastInfo = async () => {
@@ -20,8 +20,8 @@ const PlannedRevenue = ({ currency }) => {
                 setLoading(true);
                 setError(null);
 
-                const response = await axios.get(
-                    `${apiUrl}/finance/getForecastInfo`,
+                const response = await api.get(
+                    `/finance/getForecastInfo`,
                     {
                         params: { currency }, // Pass the selected currency
                         withCredentials: true
@@ -50,7 +50,7 @@ const PlannedRevenue = ({ currency }) => {
         };
 
         fetchForecastInfo();
-    }, [apiUrl, currency]);
+    }, [currency]);
 
     // Currency display function
     const currencyDisplay = (currencyCode) => {

@@ -34,7 +34,7 @@ const getPo = async (req, res, next) => {
   try {
     const poList = await PurchaseOrder.findAll({
       include: [{ model: MissionCard, as: 'projectPo' }],
-      order: [['poDate', 'DESC']],
+      order: [['po_date', 'DESC']],
     });
     return res.status(200).json({ success: true, purchaseOrders: poList });
   } catch (error) {
@@ -79,7 +79,7 @@ const getLatestPo = async (req, res, next) => {
     const poList = await PurchaseOrder.findAll({
       include: [{ model: MissionCard, as: 'projectPo' }],
       limit: 5,
-      order: [['createdAt', 'DESC']],
+      order: [['po_date', 'DESC']],
     });
     return res.status(200).json({ success: true, purchaseOrders: poList });
   } catch (error) {

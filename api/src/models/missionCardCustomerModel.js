@@ -1,6 +1,6 @@
 // models/missionCardCustomerModel.js
 
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../db/connection');
 const MissionCard = require('./missionModel');
 const Customers = require('./customerModel');
@@ -15,6 +15,7 @@ const MissionCardCustomer = sequelize.define(
       allowNull: false,
     },
     missionCardId: {
+      field: 'mission_card_id',
       type: DataTypes.BIGINT,
       references: {
         model: MissionCard,
@@ -22,6 +23,7 @@ const MissionCardCustomer = sequelize.define(
       },
     },
     customerId: {
+      field: 'customer_id',
       type: DataTypes.INTEGER,
       references: {
         model: Customers,

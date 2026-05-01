@@ -4,13 +4,13 @@ import ReactApexChart from 'react-apexcharts';
 import numeral from 'numeral';
 import dayjs from 'dayjs'; // Import dayjs
 import { Spinner } from 'flowbite-react';
-import axios from 'axios';
+import api from "../../../axios";
 
 const TotalPO = ({ currency }) => {
     const [purchaseGraphAmount, setPurchaseGraphAmount] = useState(0);
     const [purchaseStats, setPurchaseStats] = useState([]);
     const [loading, setLoading] = useState(true);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const currencyRates = {
         USD: 1,
@@ -43,7 +43,7 @@ const TotalPO = ({ currency }) => {
     useEffect(() => {
         const fetchPurchaseData = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/finance/getPurchaseInfo`, {
+                const response = await api.get(`/finance/getPurchaseInfo`, {
                     withCredentials: true,
                     params: { currency },
                 });
@@ -68,7 +68,7 @@ const TotalPO = ({ currency }) => {
         };
 
         fetchPurchaseData();
-    }, [apiUrl, currency]);
+    }, [currency]);
 
     const totalOrders = {
         series: [

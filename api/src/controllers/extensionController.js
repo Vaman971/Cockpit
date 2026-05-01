@@ -87,7 +87,7 @@ const getExtensions = async (req, res, next) => {
         { model: Project, as: 'projectExtension' },
         { model: User, as: 'assignedProjectLeader' },
       ],
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
     });
     return res.status(200).json({ success: true, extensions });
   } catch (error) {

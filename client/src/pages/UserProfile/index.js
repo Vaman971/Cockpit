@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from "../../axios";
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from 'react'
 import { useSelector } from "react-redux";
@@ -9,7 +9,7 @@ const UserProfile = () => {
     const [profileImage, setProfileImage] = useState(null);
     const [missions, setMissions] = useState([]);
     const [userMissions, setUserMissions] = useState([]);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     const { currentUser } = useSelector((state) => state.user);
     const { id } = useParams();
     // console.log(id)
@@ -34,8 +34,8 @@ const UserProfile = () => {
     useEffect(() => {
         const getProfileData = async () => {
             try {
-                const res = await axios.get(
-                    `${apiUrl}/profile/getSingleProfileDetails/${id}`,
+                const res = await api.get(
+                    `/profile/getSingleProfileDetails/${id}`,
                     { withCredentials: true }
                 );
                 const profileData = res.data;
@@ -50,11 +50,11 @@ const UserProfile = () => {
             }
         };
         getProfileData();
-    }, [apiUrl, id]);
+    }, [id]);
 
     const fetchMissions = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/mission/users/${id}`);
+            const response = await api.get(`/mission/users/${id}`);
             setUserMissions(response.data);
             console.log(response.data)
         } catch (error) {
@@ -63,7 +63,7 @@ const UserProfile = () => {
     };
     useEffect(() => {
         fetchMissions();
-    }, [apiUrl])
+    }, [])
 
     return (
         <div className="pt-5">

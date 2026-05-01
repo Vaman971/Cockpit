@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {Alert, Spinner} from "flowbite-react";
-import axios from 'axios';
+import api from "../../axios";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +15,7 @@ const SignIn = () => {
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API_URL
+  
 
   const handlechange = (e) => {
     setFormData({ ...formdata, [e.target.id]: e.target.value });
@@ -29,8 +29,8 @@ const SignIn = () => {
     try {
       dispatch(signInStart());
       
-      const res = await axios.post(
-        `${apiUrl}/auth/signIn`,
+      const res = await api.post(
+        `/auth/signIn`,
         formdata,
         {
           headers: {

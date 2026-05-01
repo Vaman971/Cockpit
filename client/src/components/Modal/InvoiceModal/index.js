@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 
 const InvoiceModal = ({ isOpen, handleClose, poId }) => {
   const [formData, setFormData] = useState({});
   const [invoiceDate, setInvoiceDate] = useState("");
   const [invoiceAmount, setInvoiceAmount] = useState("");
   const [forecastAmount, setForecastAmount] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/invoice/createInvoiceByPoId/${poId}`,
+      const res = await api.post(
+        `/invoice/createInvoiceByPoId/${poId}`,
         formData,
         {
           withCredentials: true,

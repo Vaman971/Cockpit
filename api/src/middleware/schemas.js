@@ -70,10 +70,15 @@ const updateProject = z
 
 const createOpportunity = z.object({
   OpDescription: z.string().min(1, { message: 'Opportunity description is required.' }),
+  OpUnit: z.string().min(1, { message: 'Opportunity unit is required.' }),
+  AssociatedWP: z.string().min(1, { message: 'Associated work package is required.' }),
+  CustomerContactPoint: z.string().min(1, { message: 'Customer contact point is required.' }),
   cluster: optionalString,
-  OpRegion: optionalString,
+  OpRegion: z.string().min(1, { message: 'Opportunity region is required.' }),
   Siglum: optionalString,
-  status: z.enum(['Active', 'Won', 'Lost', 'On Hold']).default('Active'),
+  status: z
+    .enum(['Prospection', 'Advanced', 'Proposal', 'Won', 'Lost', 'Hold'])
+    .default('Prospection'),
   ExpectedDealSize: z.coerce.number().nonnegative().optional(),
   currencyCode: z.string().length(3).default('EUR'),
   MissionStartDate: optionalDate,
@@ -82,7 +87,7 @@ const createOpportunity = z.object({
 
 const updateOpportunity = z
   .object({
-    status: z.enum(['Active', 'Won', 'Lost', 'On Hold']).optional(),
+    status: z.enum(['Prospection', 'Advanced', 'Proposal', 'Won', 'Lost', 'Hold']).optional(),
     ExpectedDealSize: z.coerce.number().nonnegative().optional(),
     MarkedOpp: z.boolean().optional(),
     cluster: optionalString,

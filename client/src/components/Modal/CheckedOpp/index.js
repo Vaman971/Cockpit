@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 
 const CheckedOpp = ({ isOpen, onClose, opportunityId }) => {
   const [formData, setFormData] = useState({});
@@ -8,7 +8,7 @@ const CheckedOpp = ({ isOpen, onClose, opportunityId }) => {
   const [missionEndDate, setMissionEndDate] = useState("");
   const [currencyCode, setCurrencyCode] = useState("");
   const [data, setData] = useState({});
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const currencyOptions = [
     { label: "India", value: "INR" },
@@ -24,8 +24,8 @@ const CheckedOpp = ({ isOpen, onClose, opportunityId }) => {
     e.preventDefault();
     // console.log(formData.Priority);
     try {
-      const res = await axios.put(
-        `${apiUrl}/oppurtunities/update/${opportunityId}`,
+      const res = await api.put(
+        `/oppurtunities/update/${opportunityId}`,
         formData,
         {
           headers: {
@@ -51,7 +51,7 @@ const CheckedOpp = ({ isOpen, onClose, opportunityId }) => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/oppurtunities/getOpp/${opportunityId}`, { withCredentials: true });
+      const res = await api.get(`/oppurtunities/getOpp/${opportunityId}`, { withCredentials: true });
       const responseData = res.data;
 
       if (responseData.success === false) {
@@ -70,7 +70,7 @@ const CheckedOpp = ({ isOpen, onClose, opportunityId }) => {
 
   useEffect(() => {
     fetchData();
-  }, [apiUrl]);
+  }, []);
 
   const formatDate = (dateString) => {
     if (dateString === null) {

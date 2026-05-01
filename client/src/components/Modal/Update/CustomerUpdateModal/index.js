@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../../../../axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
  
 const CustomerUpdateModal = ({ isOpen, closeModal, customerId }) => {
   const [formData, setFormData] = useState({});
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const [customerData, setCustomerData] = useState({});
   const [customerFirstName, setCustomerFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -17,8 +17,8 @@ const CustomerUpdateModal = ({ isOpen, closeModal, customerId }) => {
  const handleSubmit = async (e) => { 
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${apiUrl}/customer/updateCustomer/${customerId}`,
+      const res = await api.put(
+        `/customer/updateCustomer/${customerId}`,
         formData,
         {
           headers: {
@@ -43,8 +43,8 @@ const CustomerUpdateModal = ({ isOpen, closeModal, customerId }) => {
  
 
 useEffect(() => {
-    axios
-      .get(`${apiUrl}/customer/getMissionByCustomerId/${customerId}`, {
+    api
+      .get(`/customer/getMissionByCustomerId/${customerId}`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -53,7 +53,7 @@ useEffect(() => {
       .catch((error) => {
         console.error("Error fetching customers:", error);
       });
-  }, [apiUrl, customerId]);
+  }, [customerId]);
 
 
   const handleCustomerFirstNameChange = (e) => {

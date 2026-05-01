@@ -104,7 +104,7 @@ const getSavingsByRevenueId = async (req, res) => {
     const savings = await savingModel.findAll({
       where: { revenueId: id },
       include: [{ model: RevenueModel, as: 'savingRevenue' }],
-      order: [['savingDate', 'DESC']],
+      order: [['saving_date', 'DESC']],
     });
     if (!savings || savings.length === 0) {
       return res.status(404).json({ error: 'No savings found for the specified revenue ID' });

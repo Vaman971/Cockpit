@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
  
 const SharePointModal = ({ isOpen, handleClose, missionId }) => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
  
   // Fetch existing links when modal opens
   useEffect(() => {
     const fetchSharepointLinks = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${apiUrl}/sharePoint/getSharepointLinkById/${missionId}`, {
+        const res = await api.get(`/sharePoint/getSharepointLinkById/${missionId}`, {
           withCredentials: true,
         });
  
@@ -35,7 +35,7 @@ const SharePointModal = ({ isOpen, handleClose, missionId }) => {
     if (isOpen && missionId) {
       fetchSharepointLinks();
     }
-  }, [isOpen, missionId, apiUrl]);
+  }, [isOpen, missionId]);
  
   const handleLinkChange = (index, e) => {
     const updated = [...links];
@@ -57,8 +57,8 @@ const SharePointModal = ({ isOpen, handleClose, missionId }) => {
     }
  
     try {
-      const res = await axios.post(
-        `${apiUrl}/sharePoint/assignLinkToMission/${missionId}`,
+      const res = await api.post(
+        `/sharePoint/assignLinkToMission/${missionId}`,
         { links: validLinks },
         { withCredentials: true }
       );

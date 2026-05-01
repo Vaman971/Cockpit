@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import { DownloadIcon } from '@heroicons/react/solid';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 
 const RecentPurchaseOrder = ({ currency }) => {
     const [poData, setPoData] = useState([]);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const formatPoId = (id) => {
         if (id == null) return "PO-00000"; // Handle undefined or null IDs
@@ -49,7 +49,7 @@ const RecentPurchaseOrder = ({ currency }) => {
     useEffect(() => {
         const fetchLatestPurchaseOrders = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/po/getLatestPo`, {
+                const response = await api.get(`/po/getLatestPo`, {
                     withCredentials: true,
                     params: { currency },
                 });
@@ -63,11 +63,11 @@ const RecentPurchaseOrder = ({ currency }) => {
         if (currency) {
             fetchLatestPurchaseOrders();
         }
-    }, [currency, apiUrl]);
+    }, [currency]);
 
     const handleExportCSV = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/po/getLatestPo`, {
+            const response = await api.get(`/po/getLatestPo`, {
                 withCredentials: true,
                 params: { currency },
             });

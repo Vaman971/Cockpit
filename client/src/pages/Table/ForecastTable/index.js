@@ -6,7 +6,7 @@ import ForcastUpdate from "../../../components/Modal/Update/ForcastUpdate";
 import ReactPaginate from "react-paginate";
 import Select from "react-select";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../../axios";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 
@@ -26,7 +26,7 @@ const ForecastTable = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setpageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const itemsPerPage = 20;
 
   const regionOptions = [
@@ -147,7 +147,7 @@ const ForecastTable = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/forecast/getAll`, {
+      const res = await api.get(`/forecast/getAll`, {
         withCredentials: true,
       });
 

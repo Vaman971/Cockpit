@@ -123,14 +123,24 @@ describe('schemas — createInvoice', () => {
 });
 
 describe('schemas — createOpportunity', () => {
-  it('passes with required description', () => {
-    const result = schemas.createOpportunity.safeParse({ OpDescription: 'New Deal' });
+  it('passes with required opportunity fields', () => {
+    const result = schemas.createOpportunity.safeParse({
+      OpDescription: 'New Deal',
+      OpUnit: 'Consulting',
+      AssociatedWP: 'WP-1',
+      CustomerContactPoint: 'customer@example.com',
+      OpRegion: 'EU',
+    });
     expect(result.success).toBe(true);
   });
 
   it('fails with invalid status', () => {
     const result = schemas.createOpportunity.safeParse({
       OpDescription: 'Deal',
+      OpUnit: 'Consulting',
+      AssociatedWP: 'WP-1',
+      CustomerContactPoint: 'customer@example.com',
+      OpRegion: 'EU',
       status: 'Unknown',
     });
     expect(result.success).toBe(false);

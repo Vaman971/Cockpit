@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import numeral from "numeral";
 import Dropdown from '../../../components/Dropdown';
 import ReactApexChart from 'react-apexcharts';
-import axios from 'axios'
+import api from "../../../axios";
 import IconHorizontalDots from '../../../components/Icon/IconHorizontalDots';
 import { Spinner } from 'flowbite-react';
 const POandInvoicedAmount = ({ currencyCode }) => {
@@ -18,7 +18,7 @@ const POandInvoicedAmount = ({ currencyCode }) => {
   const [loading, setLoading] = useState(false);
   const [graphRange, setGraphRange] = useState([]);
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const formatLargeNumber = (number) => {
     return numeral(number).format("0.000a");
   };
@@ -58,7 +58,7 @@ const POandInvoicedAmount = ({ currencyCode }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${apiUrl}/finance/getPoAndInvoiceData?filter=${query}&cluster=${graphCluster}&region=${region}&currencyCode=${currencyCode}`, { withCredentials: true });
+        const response = await api.get(`/finance/getPoAndInvoiceData?filter=${query}&cluster=${graphCluster}&region=${region}&currencyCode=${currencyCode}`, { withCredentials: true });
         const data = response.data;
         console.log(data);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import { toast } from "react-toastify";
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,12 +13,12 @@ const ViewDocLinkModal = ({ isOpen, handleClose, missionId }) => {
   const [editedUrl, setEditedUrl] = useState("");
   const [originalUrl, setOriginalUrl] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
  
   useEffect(() => {
     const fetchLinks = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/sharePoint/getSharepointLinkById/${missionId}`, {
+        const res = await api.get(`/sharePoint/getSharepointLinkById/${missionId}`, {
           withCredentials: true,
         });
  
@@ -45,11 +45,11 @@ const ViewDocLinkModal = ({ isOpen, handleClose, missionId }) => {
     if (isOpen && missionId) {
       fetchLinks();
     }
-  }, [isOpen, missionId, apiUrl]);
+  }, [isOpen, missionId]);
  
   const handleDeleteConfirmed = async () => {
     try {
-      await axios.delete(`${apiUrl}/sharePoint/deleteSharepointLink/${confirmDeleteId}`, {
+      await api.delete(`/sharePoint/deleteSharepointLink/${confirmDeleteId}`, {
         withCredentials: true,
       });
  
@@ -85,7 +85,7 @@ const ViewDocLinkModal = ({ isOpen, handleClose, missionId }) => {
     }
  
     try {
-      await axios.put(`${apiUrl}/sharePoint/updateSharepointLink/${id}`, {
+      await api.put(`/sharePoint/updateSharepointLink/${id}`, {
         url_link: editedUrl,
       }, {
         withCredentials: true,

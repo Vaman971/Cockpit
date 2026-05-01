@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import countryCodes from "../../../assets/CountryCodes.json";
 import { toast } from "react-toastify";
 
@@ -20,7 +20,7 @@ const ActionModal = ({ isOpen, onClose, opportunityId }) => {
   const [selectedPriority, setSelectedPriority] = useState("");
   const [selectedConfidence, setSelectedConfidence] = useState("");
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   // console.log(formData);
 
   // const priorities = ["High", "Medium", "Low"];
@@ -36,8 +36,8 @@ const ActionModal = ({ isOpen, onClose, opportunityId }) => {
     e.preventDefault();
     // console.log(formData.Priority);
     try {
-      const res = await axios.put(
-        `${apiUrl}/oppurtunities/update/${opportunityId}`,
+      const res = await api.put(
+        `/oppurtunities/update/${opportunityId}`,
         formData,
         {
           headers: {
@@ -74,8 +74,8 @@ const ActionModal = ({ isOpen, onClose, opportunityId }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/oppurtunities/getOpp/${opportunityId}`, { withCredentials: true })
+    api
+      .get(`/oppurtunities/getOpp/${opportunityId}`, { withCredentials: true })
       .then((response) => {
         // console.log(response.data);
         setOppData(response.data);
@@ -84,11 +84,11 @@ const ActionModal = ({ isOpen, onClose, opportunityId }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [opportunityId, apiUrl]);
+  }, [opportunityId]);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getusers`, { withCredentials: true })
+    api
+      .get(`/users/getusers`, { withCredentials: true })
       .then((response) => {
         const data = response.data;
         const filteredUsers = data.filter(
@@ -99,7 +99,7 @@ const ActionModal = ({ isOpen, onClose, opportunityId }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   const formatDate = (dateString) => {
     if (dateString === null) {

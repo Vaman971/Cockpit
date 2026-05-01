@@ -303,7 +303,7 @@ const getLatestMission = async (req, res) => {
   try {
     const latestMission = await MissionCard.findAll({
       limit: 5, // Limit the result to 5 records
-      order: [['createdAt', 'DESC']], // Order by createdAt field in descending order
+      order: [['updated_at', 'DESC']],
       include: [
         { model: Project, as: 'missionCards' },
         { model: User, as: 'assignedMissionCards' },

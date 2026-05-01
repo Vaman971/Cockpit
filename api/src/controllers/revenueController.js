@@ -55,7 +55,7 @@ const getLatestRevenues = async (req, res, next) => {
   try {
     const revenues = await RevenueModel.findAll({
       limit: 5,
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
     });
     return res.status(200).json({ success: true, revenues });
   } catch (error) {

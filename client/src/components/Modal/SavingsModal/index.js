@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 
 const SavingsModal = ({ isOpen, onClose,revenueId }) => {
   const [formData, setFormData] = useState({});
   const [date, setDate] = useState("");
   const [amount, setAmount] = useState("");
   const [remark, setRemark] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async(e) => {
     e.preventDefault();
     try{
-      const res = await axios.post (
-        `${apiUrl}/saving/createSavings/${revenueId}`,
+      const res = await api.post (
+        `/saving/createSavings/${revenueId}`,
          formData,
          {
             withCredentials: true,

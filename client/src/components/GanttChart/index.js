@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import moment from 'moment';
-import axios from 'axios';
+import api from "../../axios";
 import { useNavigate } from 'react-router-dom';
 
 export default function MissionTimeline() {
     const [missionData, setMissionData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [missionsPerPage, setMissionsPerPage] = useState(15);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function MissionTimeline() {
             setLoading(true); // start loading
             setError(null); // reset any previous errors
             try {
-                const res = await axios.get(`${apiUrl}/mission/getAll`, { withCredentials: true });
+                const res = await api.get(`/mission/getAll`, { withCredentials: true });
                 const data = res.data;
                 if (data.success === false) {
                     setError(data.message || "Failed to fetch data");
@@ -33,7 +33,7 @@ export default function MissionTimeline() {
             }
         }
         fetchData();
-    }, [apiUrl]);
+    }, []);
 
    
     const formatMissionData = () => {

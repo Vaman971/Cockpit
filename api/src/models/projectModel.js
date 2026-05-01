@@ -24,7 +24,7 @@ const Project = sequelize.define(
       allowNull: true,
     },
     projectLead: {
-      field: 'projectLead',
+      field: 'project_lead',
       type: DataTypes.INTEGER,
     },
     oppurtunity_id: {
@@ -33,6 +33,7 @@ const Project = sequelize.define(
       allowNull: false,
     },
     projectType: {
+      field: 'project_type',
       type: DataTypes.ENUM,
       values: ['External', 'Internal'],
       defaultValue: 'External',

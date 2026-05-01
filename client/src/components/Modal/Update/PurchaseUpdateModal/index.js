@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ const PoUpdate = ({ isOpen, onClose, poId, handleInvoiceDetails, handleBack, mis
   const [data, setData] = useState({});
   const [status, setStatus] = useState("");
   const [currencyCode, setCurrencyCode] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const navigate = useNavigate();
 
   // Country and currency code mapping
@@ -26,7 +26,7 @@ const PoUpdate = ({ isOpen, onClose, poId, handleInvoiceDetails, handleBack, mis
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`${apiUrl}/po/update/${poId}`, formData, {
+      const res = await api.put(`/po/update/${poId}`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -88,8 +88,8 @@ const PoUpdate = ({ isOpen, onClose, poId, handleInvoiceDetails, handleBack, mis
 
   useEffect(() => {
     // Fetch PO data by ID and set initial form data
-    axios
-      .get(`${apiUrl}/po/getPo/${poId}`, { withCredentials: true })
+    api
+      .get(`/po/getPo/${poId}`, { withCredentials: true })
       .then((response) => {
         const data = response.data;
         setData(data); // Assuming the API returns the entire PO object
@@ -98,7 +98,7 @@ const PoUpdate = ({ isOpen, onClose, poId, handleInvoiceDetails, handleBack, mis
       .catch((error) => {
         console.error("Error fetching PO data:", error);
       });
-  }, [poId, apiUrl]);
+  }, [poId]);
 
   return (
     <>

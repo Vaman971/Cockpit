@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import axios from "axios";
+import api from "../../../axios";
 import React, { useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
@@ -18,17 +18,17 @@ const RevenueInvoiceDetails = ({isOpen, onClose, revenueId,extension}) => {
   const [isInvoiceModelOpen, setIsInvoiceModalOpen] = useState(false);
   const [invoiceIdToDelete, setInvoiceIdToDelete] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   // console.log(extension)
 
   useEffect(() => {
     fetchData();
-  }, [isInvoiceEdit, isInvoiceModelOpen, invoiceId, apiUrl, showModal]);
+  }, [isInvoiceEdit, isInvoiceModelOpen, invoiceId, showModal]);
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(
-        `${apiUrl}/revenueInvoice/getRevenueInvoicesByRevenueId/${revenueId}`,
+      const res = await api.get(
+        `/revenueInvoice/getRevenueInvoicesByRevenueId/${revenueId}`,
         { withCredentials: true }
       );
       const responseData = res.data;
@@ -53,8 +53,8 @@ const RevenueInvoiceDetails = ({isOpen, onClose, revenueId,extension}) => {
 
   const handleDeleteInvoice = async () => {
     try {
-      const res = await axios.delete(
-        `${apiUrl}/revenueInvoice/deleteRevenueInvoice/${invoiceIdToDelete}`,
+      const res = await api.delete(
+        `/revenueInvoice/deleteRevenueInvoice/${invoiceIdToDelete}`,
         { withCredentials: true }
       );
       const data = res.data;

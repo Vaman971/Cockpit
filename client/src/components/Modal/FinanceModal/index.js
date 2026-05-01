@@ -1,15 +1,15 @@
-import axios from 'axios';
+import api from "../../../axios";
 import React,{useState} from 'react'
 import { toast } from 'react-toastify';
 
 const ExpenseModal = ({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({});
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
     
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
-        const res = await axios.post(`${apiUrl}/expense/createExpense`, formData, {
+        const res = await api.post(`/expense/createExpense`, formData, {
           withCredentials: true,
         });
         const data = res.data;

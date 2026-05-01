@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../axios";
 import Select from 'react-select';
 
 const MissionModal = ({ isOpen, onClose, goToLastPageAndRow }) => {
@@ -11,12 +11,12 @@ const MissionModal = ({ isOpen, onClose, goToLastPageAndRow }) => {
   const [missionLead, setMissionLead] = useState(null);
   const [missionType, setMissionType] = useState(null);
   const [missionOrientation, setMissionOrientation] = useState(null);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/mission/createMission`,
+      const res = await api.post(
+        `/mission/createMission`,
         formData,
         {
           headers: {
@@ -41,8 +41,8 @@ const MissionModal = ({ isOpen, onClose, goToLastPageAndRow }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/users/getusers`, { withCredentials: true })
+    api
+      .get(`/users/getusers`, { withCredentials: true })
       .then((response) => {
         const data = response.data;
         const filteredUsers = data.filter(user => user.user_type === "Admin" || user.user_type === "Leader");
@@ -51,18 +51,18 @@ const MissionModal = ({ isOpen, onClose, goToLastPageAndRow }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/project/getProj`, { withCredentials: true })
+    api
+      .get(`/project/getProj`, { withCredentials: true })
       .then((response) => {
         setProjData(response.data);
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl]);
+  }, []);
 
   const handleMissionLead = (selectedOption) => {
     setMissionLead(selectedOption);

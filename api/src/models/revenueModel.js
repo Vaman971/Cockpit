@@ -12,18 +12,22 @@ const RevenueModel = sequelize.define(
       allowNull: false,
     },
     revenueDescription: {
+      field: 'revenue_description',
       type: DataTypes.STRING,
       allowNull: true,
     },
     plannedRevenue: {
+      field: 'planned_revenue',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     actualRevenue: {
+      field: 'actual_revenue',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     forecastRevenue: {
+      field: 'forecast_revenue',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
@@ -62,6 +66,7 @@ const RevenueModel = sequelize.define(
       defaultValue: true,
     },
     createdAt: {
+      field: 'created_at',
       type: DataTypes.DATEONLY,
       allowNull: true,
     },

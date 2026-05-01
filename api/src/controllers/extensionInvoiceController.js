@@ -128,7 +128,7 @@ const getExtensionInvoicesByExtensionId = async (req, res, next) => {
     const invoices = await ExtensionInvoice.findAll({
       where: { extensionId: req.params.id },
       include: [{ model: ExtensionModel, as: 'invoiceExtension' }],
-      order: [['invoiceDate', 'DESC']],
+      order: [['invoice_date', 'DESC']],
     });
     if (!invoices || invoices.length === 0) {
       return res

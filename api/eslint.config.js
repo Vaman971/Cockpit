@@ -1,5 +1,6 @@
 /** @type {import('eslint').Linter.Config[]} */
 const js = require('@eslint/js');
+const globals = require('globals');
 
 module.exports = [
   js.configs.recommended,
@@ -19,6 +20,8 @@ module.exports = [
         fetch: 'readonly',
         Headers: 'readonly',
         Response: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
         setTimeout: 'readonly',
         clearInterval: 'readonly',
         setInterval: 'readonly',

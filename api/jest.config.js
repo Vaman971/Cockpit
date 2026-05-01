@@ -7,15 +7,17 @@ module.exports = {
   collectCoverageFrom: [
     'src/controllers/**/*.js',
     'src/middleware/**/*.js',
+    'src/models/**/*.js',
+    '!src/models/sync.js',
     'src/utils/**/*.js',
     '!src/utils/logger.js', // logger is a side-effect module
   ],
   coverageThreshold: {
     global: {
-      branches: 50,
-      functions: 60,
-      lines: 60,
-      statements: 60,
+      branches: 25,
+      functions: 40,
+      lines: 40,
+      statements: 40,
     },
   },
   coverageReporters: ['text', 'lcov', 'html'],

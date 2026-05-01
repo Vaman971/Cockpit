@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import {toast} from 'react-toastify'
 import {useSelector} from "react-redux";
  
@@ -10,7 +10,7 @@ const PasswordModal = ({isOpen,onClose}) => {
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({});
   const { currentUser } = useSelector((state) => state.user);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
  
   const handleSubmit =  async(e) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ const PasswordModal = ({isOpen,onClose}) => {
       setError("New password and confirm password must match.");
     } else {
       try {
-      const res = await axios.put(`${apiUrl}/users/updatePassword/${currentUser.user.user_id}`,formData, {withCredentials:true});
+      const res = await api.put(`/users/updatePassword/${currentUser.user.user_id}`,formData, {withCredentials:true});
       const data = res.data;
       console.log(data);
       if (data.success === false ) {

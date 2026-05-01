@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 import { ToggleSwitch } from "flowbite-react";
 
 const ForcastUpdate = ({ isOpen, onClose, forcastId }) => {
@@ -12,7 +12,7 @@ const ForcastUpdate = ({ isOpen, onClose, forcastId }) => {
   const [dpValue, setDpValue] = useState("");
   const [country, setCountry] = useState("");
   const [cluster, setCluster] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const currencyOptions = [
     { label: "India", value: "INR" },
@@ -27,8 +27,8 @@ const ForcastUpdate = ({ isOpen, onClose, forcastId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${apiUrl}/forecast/update/${forcastId}`,
+      const res = await api.put(
+        `/forecast/update/${forcastId}`,
         formData,
         {
           headers: {
@@ -52,8 +52,8 @@ const ForcastUpdate = ({ isOpen, onClose, forcastId }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/forecast/getForecast/${forcastId}`, {
+    api
+      .get(`/forecast/getForecast/${forcastId}`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -64,7 +64,7 @@ const ForcastUpdate = ({ isOpen, onClose, forcastId }) => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
-  }, [apiUrl, forcastId]);
+  }, [forcastId]);
 
   const formatDate = (dateString) => {
     if (dateString === null) {

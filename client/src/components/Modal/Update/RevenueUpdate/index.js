@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 
 const RevenueUpdate = ({ isOpen, onClose, revenueId }) => {
   const [formData, setFormData] = useState({});
   const [data, setData] = useState({});
   const [extension, setExtension] = useState('');
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(
-        `${apiUrl}/revenue/updateRevenue/${revenueId}`,
+      const res = await api.put(
+        `/revenue/updateRevenue/${revenueId}`,
         formData,
         {
           headers: {
@@ -49,8 +49,8 @@ const RevenueUpdate = ({ isOpen, onClose, revenueId }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/revenue/getRevenue/${revenueId}`, {
+    api
+      .get(`/revenue/getRevenue/${revenueId}`, {
         withCredentials: true,
       })
       .then((response) => {

@@ -38,7 +38,7 @@ const getLatestExpense = async (req, res) => {
   try {
     const expenseList = await Expense.findAll({
       limit: 5,
-      order: [['createdAt', 'DESC']],
+      order: [['expense_date', 'DESC']],
     });
     res.json(expenseList);
   } catch (error) {

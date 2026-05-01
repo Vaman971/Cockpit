@@ -4,7 +4,7 @@ import IconDollarSign from '../../../components/Icon/IconDollarSign';
 import { FaDollarSign, FaPoundSign, FaRupeeSign, FaEuroSign } from 'react-icons/fa';  // Import icons from react-icons
 import { useSelector } from 'react-redux';
 import ReactApexChart from 'react-apexcharts';
-import axios from 'axios';
+import api from "../../../axios";
 import { Spinner } from 'flowbite-react';
 
 const MissionLeaderStats = ({ currency }) => {
@@ -17,12 +17,12 @@ const MissionLeaderStats = ({ currency }) => {
     const [profileData, setProfileData] = useState([]);
     const { currentUser } = useSelector((state) => state.user);
 
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const fetchPurchaseBarData = async () => {
         try {
-            const purchaseData = await axios.get(
-                `${apiUrl}/analytics/getPurchaseAmountByMissionLeader`,
+            const purchaseData = await api.get(
+                `/analytics/getPurchaseAmountByMissionLeader`,
                 { withCredentials: true }
             );
 
@@ -41,7 +41,7 @@ const MissionLeaderStats = ({ currency }) => {
     const fetchMissionLeaderPO = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${apiUrl}/finance/getPoByMissionLeader`, {
+            const response = await api.get(`/finance/getPoByMissionLeader`, {
                 withCredentials: true,
                 params: { currency }
             });
@@ -78,7 +78,7 @@ const MissionLeaderStats = ({ currency }) => {
     };
 
     const fetchProfileData = async () => {
-        const res = await axios.get(`${apiUrl}/profile/getProfiles`, {
+        const res = await api.get(`/profile/getProfiles`, {
             withCredentials: true,
         });
         const data = res.data;
@@ -109,7 +109,7 @@ const MissionLeaderStats = ({ currency }) => {
     useEffect(() => {
         fetchMissionLeaderPO();
 
-    }, [apiUrl, currency]);
+    }, [currency]);
 
     useEffect(() => {
         if (currentUser.user.user_type === 'Leader' || currentUser.user.user_type === 'Admin') {

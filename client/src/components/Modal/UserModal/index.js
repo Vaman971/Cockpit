@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import FlightIcon from '@mui/icons-material/Flight';
 import { IconButton } from '@mui/material';
-import axios from 'axios';
+import api from "../../../axios";
 import { ToastContainer , toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 const UserModal = ({ isOpen, closeModal }) => {
   
   const [formData, setFormData] = useState({});
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/users/createUser`,
+      const res = await api.post(
+        `/users/createUser`,
         formData,
         {
           headers: {

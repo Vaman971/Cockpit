@@ -17,20 +17,24 @@ const ExtentionModel = sequelize.define(
       allowNull: true,
     },
     revenueProjection: {
+      field: 'revenue_projection',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     projectLeader: {
+      field: 'project_leader',
       type: DataTypes.INTEGER,
       allowNull: true,
       default: null,
     },
     currencyCode: {
+      field: 'currency_code',
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'EUR',
     },
     actualRevenue: {
+      field: 'actual_revenue',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
@@ -71,6 +75,7 @@ const ExtentionModel = sequelize.define(
       defaultValue: false,
     },
     createdAt: {
+      field: 'created_at',
       type: DataTypes.DATEONLY,
       allowNull: true,
     },

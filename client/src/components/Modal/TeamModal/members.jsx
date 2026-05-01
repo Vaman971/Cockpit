@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import { toast } from 'react-toastify';
 import UserPill from './userPill';
 import Pill from './pill';
@@ -11,7 +11,7 @@ const AddUser = ({ isOpen, closeModal, teamId, missionId }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUserSet, setSelectedUserSet] = useState(new Set());
   const [activeSuggestion, setActiveSuggestion] = useState(0);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -22,8 +22,8 @@ const AddUser = ({ isOpen, closeModal, teamId, missionId }) => {
         return;
       }
       try {
-        const res = await axios.get(
-          `${apiUrl}/profile/getAll?username=${searchTerm}`,
+        const res = await api.get(
+          `/profile/getAll?username=${searchTerm}`,
           { withCredentials: true }
         );
         const profileData = res.data;
@@ -42,8 +42,8 @@ const AddUser = ({ isOpen, closeModal, teamId, missionId }) => {
   useEffect(() => {
     const getTeamData = async () => {
       try {
-        const resp = await axios.get(
-          `${apiUrl}/teams/getTeam/${missionId}`,
+        const resp = await api.get(
+          `/teams/getTeam/${missionId}`,
           { withCredentials: true }
         );
         const teamData = resp.data;
@@ -62,8 +62,8 @@ const AddUser = ({ isOpen, closeModal, teamId, missionId }) => {
   const createTeamData = async () => {
     try {
       const users = selectedUsers.map(user => user.id);
-      const res = await axios.put(
-        `${apiUrl}/teams/addTeamMembers/${teamId}`,
+      const res = await api.put(
+        `/teams/addTeamMembers/${teamId}`,
         {
           userIds: users
         },

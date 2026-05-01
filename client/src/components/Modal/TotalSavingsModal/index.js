@@ -5,7 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
+import api from "../../../axios";
 import SavingsModal from "../SavingsModal";
 import SavingsUpdate from "../Update/SavingsUpdate";
 import { toast } from "react-toastify";
@@ -17,16 +17,16 @@ const TotalSavings = ({ isOpen, onClose, revenueId }) => {
   const [isSavingsUpdate, setIsSavingsUpdate] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [savingsId, setIsSavingsId] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   useEffect(() => {
     fetchData();
-  }, [ savingsId, apiUrl, showModal,isSavingsModalOpen,isSavingsUpdate]);
+  }, [ savingsId, showModal,isSavingsModalOpen,isSavingsUpdate]);
 
   const fetchData = async () => {
     try {
-      const res = await axios.get (
-        `${apiUrl}/saving/getSavingsByRevenueId/${revenueId}`, 
+      const res = await api.get (
+        `/saving/getSavingsByRevenueId/${revenueId}`, 
          {withCredentials: true}
       );
       const responseData = res.data;
@@ -49,8 +49,8 @@ const TotalSavings = ({ isOpen, onClose, revenueId }) => {
 
   const handleDeleteSavings = async () => {
     try {
-      const res = await axios.delete(
-        `${apiUrl}/saving/deleteSavings/${savingIdToDelete}`,
+      const res = await api.delete(
+        `/saving/deleteSavings/${savingIdToDelete}`,
         { withCredentials: true }
       );
       const data = res.data;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 import { useEffect } from "react";
 
 const SavingsUpdate = ({ isOpen, onClose,savingsId }) => {
@@ -9,13 +9,13 @@ const SavingsUpdate = ({ isOpen, onClose,savingsId }) => {
   const [data, setData] = useState("");
   const [amount, setAmount] = useState("");
   const [remark, setRemark] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async(e) => {
     e.preventDefault();
     try{
-      const res = await axios.put (
-        `${apiUrl}/saving//updateSavings/${savingsId}`,
+      const res = await api.put (
+        `/saving//updateSavings/${savingsId}`,
          formData,
          {
             headers: {
@@ -55,8 +55,8 @@ const SavingsUpdate = ({ isOpen, onClose,savingsId }) => {
 
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/saving/getSavings/${savingsId}`, {
+    api
+      .get(`/saving/getSavings/${savingsId}`, {
         withCredentials: true,
       })
       .then((response) => {

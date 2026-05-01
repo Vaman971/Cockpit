@@ -1,4 +1,5 @@
 const ForecastModel = require('../models/forecastModel');
+const logger = require('../utils/logger');
 
 // Create a forecast
 const createForecast = async (req, res) => {
@@ -6,7 +7,7 @@ const createForecast = async (req, res) => {
     const forecastCreated = await ForecastModel.create(req.body);
     res.json(forecastCreated);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -15,11 +16,11 @@ const createForecast = async (req, res) => {
 const getForecasts = async (req, res) => {
   try {
     const forecastList = await ForecastModel.findAll({
-      order: [['forcastDate', 'DESC']], // Sorting by forecast date in descending order
+      order: [['forcast_date', 'DESC']], // Sorting by forecast date in descending order
     });
     res.json(forecastList);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -34,7 +35,7 @@ const getForecastById = async (req, res) => {
     }
     res.json(forecast);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -51,7 +52,7 @@ const updateForecast = async (req, res) => {
     }
     res.json({ success: true, message: 'Forecast updated successfully' });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -61,11 +62,11 @@ const getLatestForecasts = async (req, res) => {
   try {
     const forecastList = await ForecastModel.findAll({
       limit: 5,
-      order: [['createdAt', 'DESC']],
+      order: [['updated_at', 'DESC']],
     });
     res.json(forecastList);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

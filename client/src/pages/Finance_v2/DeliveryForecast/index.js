@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import numeral from 'numeral';
 import IconEye from '../../../components/Icon/IconEye';
 import { Spinner } from "flowbite-react";
@@ -10,13 +10,13 @@ const DeliveryForcast = ({ currency }) => {
     const [deliveryInfo, setDeliveryInfo] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     useEffect(() => {
         const fetchDeliveryInfo = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${apiUrl}/finance/getDeliveryInfo`, {
+                const response = await api.get(`/finance/getDeliveryInfo`, {
                     params: { currency },
                     withCredentials: true,
                 });
@@ -42,7 +42,7 @@ const DeliveryForcast = ({ currency }) => {
         };
 
         fetchDeliveryInfo();
-    }, [apiUrl, currency]);
+    }, [currency]);
 
     const getMonthName = (month) => {
         const months = [

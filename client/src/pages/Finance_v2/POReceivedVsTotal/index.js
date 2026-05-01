@@ -1,6 +1,6 @@
 import { dividerClasses } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from "../../../axios";
 import { Spinner } from 'flowbite-react';
 import { DownloadIcon } from '@heroicons/react/solid';
 import Papa from "papaparse";
@@ -11,7 +11,7 @@ const POReceivedVsTotal = ({ currency }) => {
     const [purchaseOrders, setPurchaseOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const currencyRates = {
         USD: 1,
@@ -54,7 +54,7 @@ const POReceivedVsTotal = ({ currency }) => {
         const fetchPurchaseOrders = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${apiUrl}/finance/getPoProgress`, {
+                const response = await api.get(`/finance/getPoProgress`, {
                     params: { currency },
                     withCredentials: true,
                 });
@@ -73,7 +73,7 @@ const POReceivedVsTotal = ({ currency }) => {
         };
 
         fetchPurchaseOrders();
-    }, [apiUrl, currency]); // Re-fetch when currency prop changes
+    }, [currency]); // Re-fetch when currency prop changes
 
     if (loading) return <div className="flex justify-center items-center h-full w-full">
         <div className="flex flex-col items-center">

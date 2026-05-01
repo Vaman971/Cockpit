@@ -15,9 +15,9 @@ const revenueInvoiceModel = require('../models/revenueInvoiceModel');
 const oppRegionCount = async (req, res) => {
   try {
     const opportunitiesByRegion = await Oppurtunity.findAll({
-      attributes: ['OpRegion', [Sequelize.fn('COUNT', Sequelize.col('OpRegion')), 'count']],
+      attributes: ['OpRegion', [Sequelize.fn('COUNT', Sequelize.col('op_region')), 'count']],
       group: ['OpRegion'],
-      order: [['OpRegion', 'ASC']],
+      order: [['op_region', 'ASC']],
     });
 
     res.json(opportunitiesByRegion);
@@ -200,7 +200,7 @@ FROM
         (SELECT 0 AS t3 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) AS thousands,
         (SELECT 0 AS t4 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) AS ten_thousands
     ) calendar
-    LEFT JOIN oppurtunities o ON calendar.date = DATE(o.createdAt)
+    LEFT JOIN oppurtunities o ON calendar.date = DATE(o.created_at)
 WHERE 
     calendar.date BETWEEN :startDate AND :endDate
 GROUP BY 
@@ -253,7 +253,7 @@ const oppWonLastWeek = async (req, res) => {
         (SELECT 0 AS t3 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) AS thousands,
         (SELECT 0 AS t4 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) AS ten_thousands
     ) calendar
-    LEFT JOIN oppurtunities o ON calendar.date = DATE(o.updatedAt)
+    LEFT JOIN oppurtunities o ON calendar.date = DATE(o.updated_at)
 WHERE 
     calendar.date BETWEEN :endDate AND :startDate
 GROUP BY 
@@ -282,16 +282,16 @@ const oppQueryCount = async (req, res) => {
       query = `
       WITH oppCount AS (
         SELECT
-          YEAR(createdAt) AS Year,
+          YEAR(created_at) AS Year,
           COUNT(*) AS oppCount
         FROM
           oppurtunities
         WHERE
-          createdAt >= CURDATE() - INTERVAL 12 ${filter}
+          created_at >= CURDATE() - INTERVAL 12 ${filter}
           ${cluster ? `AND cluster = '${cluster}'` : ''}
-          ${region ? `AND OpRegion = '${region}'` : ''}
+          ${region ? `AND op_region = '${region}'` : ''}
         GROUP BY
-          YEAR(createdAt)
+          YEAR(created_at)
       )
       SELECT
         oppCount.Year,
@@ -304,23 +304,23 @@ const oppQueryCount = async (req, res) => {
       FROM
         oppCount
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, COUNT(*) AS wonCount FROM oppurtunities WHERE status = 'Won' GROUP BY YEAR(updatedAt)) AS wonCount
+        (SELECT YEAR(updated_at) AS Year, COUNT(*) AS wonCount FROM oppurtunities WHERE status = 'Won' GROUP BY YEAR(updated_at)) AS wonCount
       ON
         oppCount.Year = wonCount.Year
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, COUNT(*) AS proposalCount FROM oppurtunities WHERE status = 'Proposal' GROUP BY YEAR(updatedAt)) AS proposalCount
+        (SELECT YEAR(updated_at) AS Year, COUNT(*) AS proposalCount FROM oppurtunities WHERE status = 'Proposal' GROUP BY YEAR(updated_at)) AS proposalCount
       ON
         oppCount.Year = proposalCount.Year
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, COUNT(*) AS prospectionCount FROM oppurtunities WHERE status = 'Prospection' GROUP BY YEAR(updatedAt)) AS prospectionCount
+        (SELECT YEAR(updated_at) AS Year, COUNT(*) AS prospectionCount FROM oppurtunities WHERE status = 'Prospection' GROUP BY YEAR(updated_at)) AS prospectionCount
       ON
         oppCount.Year = prospectionCount.Year
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, COUNT(*) AS advancedCount FROM oppurtunities WHERE status = 'Advanced' GROUP BY YEAR(updatedAt)) AS advancedCount
+        (SELECT YEAR(updated_at) AS Year, COUNT(*) AS advancedCount FROM oppurtunities WHERE status = 'Advanced' GROUP BY YEAR(updated_at)) AS advancedCount
       ON
         oppCount.Year = advancedCount.Year
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, COUNT(*) AS holdCount FROM oppurtunities WHERE status = 'Hold' GROUP BY YEAR(updatedAt)) AS holdCount
+        (SELECT YEAR(updated_at) AS Year, COUNT(*) AS holdCount FROM oppurtunities WHERE status = 'Hold' GROUP BY YEAR(updated_at)) AS holdCount
       ON
         oppCount.Year = holdCount.Year
       ORDER BY
@@ -330,20 +330,20 @@ const oppQueryCount = async (req, res) => {
       query = `
       WITH oppCount AS (
         SELECT
-          YEAR(createdAt) AS Year,
+          YEAR(created_at) AS Year,
           ${
             filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-          }(createdAt) AS ${filter},
+          }(created_at) AS ${filter},
           COUNT(*) AS oppCount
         FROM
           oppurtunities
         WHERE
-          createdAt >= CURDATE() - INTERVAL 12 ${filter}
+          created_at >= CURDATE() - INTERVAL 12 ${filter}
           ${cluster ? `AND cluster = '${cluster}'` : ''}
-          ${region ? `AND OpRegion = '${region}'` : ''}
+          ${region ? `AND op_region = '${region}'` : ''}
         GROUP BY
-          YEAR(createdAt),
-          ${filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'}(createdAt)
+          YEAR(created_at),
+          ${filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'}(created_at)
       )
       SELECT
         oppCount.Year,
@@ -357,43 +357,43 @@ const oppQueryCount = async (req, res) => {
       FROM
         oppCount
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, ${
+        (SELECT YEAR(updated_at) AS Year, ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt) AS ${filter}, COUNT(*) AS wonCount FROM oppurtunities WHERE status = 'Won' GROUP BY YEAR(updatedAt), ${
+        }(updated_at) AS ${filter}, COUNT(*) AS wonCount FROM oppurtunities WHERE status = 'Won' GROUP BY YEAR(updated_at), ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt)) AS wonCount
+        }(updated_at)) AS wonCount
       ON
         oppCount.Year = wonCount.Year AND oppCount.${filter} = wonCount.${filter}
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, ${
+        (SELECT YEAR(updated_at) AS Year, ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt) AS ${filter}, COUNT(*) AS proposalCount FROM oppurtunities WHERE status = 'Proposal' GROUP BY YEAR(updatedAt), ${
+        }(updated_at) AS ${filter}, COUNT(*) AS proposalCount FROM oppurtunities WHERE status = 'Proposal' GROUP BY YEAR(updated_at), ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt)) AS proposalCount
+        }(updated_at)) AS proposalCount
       ON
         oppCount.Year = proposalCount.Year AND oppCount.${filter} = proposalCount.${filter}
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, ${
+        (SELECT YEAR(updated_at) AS Year, ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt) AS ${filter}, COUNT(*) AS prospectionCount FROM oppurtunities WHERE status = 'Prospection' GROUP BY YEAR(updatedAt), ${
+        }(updated_at) AS ${filter}, COUNT(*) AS prospectionCount FROM oppurtunities WHERE status = 'Prospection' GROUP BY YEAR(updated_at), ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt)) AS prospectionCount
+        }(updated_at)) AS prospectionCount
       ON
         oppCount.Year = prospectionCount.Year AND oppCount.${filter} = prospectionCount.${filter}
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, ${
+        (SELECT YEAR(updated_at) AS Year, ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt) AS ${filter}, COUNT(*) AS advancedCount FROM oppurtunities WHERE status = 'Advanced' GROUP BY YEAR(updatedAt), ${
+        }(updated_at) AS ${filter}, COUNT(*) AS advancedCount FROM oppurtunities WHERE status = 'Advanced' GROUP BY YEAR(updated_at), ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt)) AS advancedCount
+        }(updated_at)) AS advancedCount
       ON
         oppCount.Year = advancedCount.Year AND oppCount.${filter} = advancedCount.${filter}
       LEFT JOIN
-        (SELECT YEAR(updatedAt) AS Year, ${
+        (SELECT YEAR(updated_at) AS Year, ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt) AS ${filter}, COUNT(*) AS holdCount FROM oppurtunities WHERE status = 'Hold' GROUP BY YEAR(updatedAt), ${
+        }(updated_at) AS ${filter}, COUNT(*) AS holdCount FROM oppurtunities WHERE status = 'Hold' GROUP BY YEAR(updated_at), ${
           filter === 'WEEK' ? 'WEEK' : filter === 'MONTH' ? 'MONTH' : 'QUARTER'
-        }(updatedAt)) AS holdCount
+        }(updated_at)) AS holdCount
       ON
         oppCount.Year = holdCount.Year AND oppCount.${filter} = holdCount.${filter}
       ORDER BY
@@ -520,8 +520,8 @@ const getLatestOpportunities = async (req, res) => {
   try {
     const query = `SELECT *
     FROM oppurtunities
-    WHERE NextContactDate >= CURDATE()
-    ORDER BY NextContactDate ASC 
+    WHERE next_contact_date >= CURDATE()
+    ORDER BY next_contact_date ASC 
     LIMIT 5;  `;
 
     const latestOpportunities = await sequelize.query(query, {
@@ -560,18 +560,18 @@ const getExpensesAndInvoicesData = async (req, res) => {
     };
 
     const fiscalYearPurchase = `CASE 
-    WHEN MONTH(poDate) >= 4 THEN YEAR(poDate) + 1
-    ELSE YEAR(poDate)
+    WHEN MONTH(po_date) >= 4 THEN YEAR(po_date) + 1
+    ELSE YEAR(po_date)
   END`;
     const fiscalQuarterPurchase = `CASE
-    WHEN MONTH(poDate) BETWEEN 4 AND 6 THEN 1
-    WHEN MONTH(poDate) BETWEEN 7 AND 9 THEN 2
-    WHEN MONTH(poDate) BETWEEN 10 AND 12 THEN 3
+    WHEN MONTH(po_date) BETWEEN 4 AND 6 THEN 1
+    WHEN MONTH(po_date) BETWEEN 7 AND 9 THEN 2
+    WHEN MONTH(po_date) BETWEEN 10 AND 12 THEN 3
     ELSE 4
   END`;
     const fiscalMonthPurchase = `CASE
-    WHEN MONTH(poDate) >= 4 THEN CONCAT(YEAR(poDate) + 1, '-', MONTH(poDate))
-    ELSE CONCAT(YEAR(poDate), '-', MONTH(poDate))
+    WHEN MONTH(po_date) >= 4 THEN CONCAT(YEAR(po_date) + 1, '-', MONTH(po_date))
+    ELSE CONCAT(YEAR(po_date), '-', MONTH(po_date))
   END`;
 
     const fiscalYearInvoice = `CASE 
@@ -594,17 +594,17 @@ const getExpensesAndInvoicesData = async (req, res) => {
       attributes: [
         granularity === 'yearly' || granularity === 'quarterly'
           ? [sequelize.literal(fiscalYearPurchase), 'fiscalYear']
-          : [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          : [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
         granularity === 'quarterly'
           ? [sequelize.literal(fiscalQuarterPurchase), 'fiscalQuarter']
           : granularity === 'yearly'
             ? [sequelize.literal(fiscalYearPurchase), 'fiscalYear']
-            : [sequelize.fn('MONTH', sequelize.col('poDate')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('poAmount')), 'totalAmount'],
+            : [sequelize.fn('MONTH', sequelize.col('po_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('po_amount')), 'totalAmount'],
       ],
       group: groupBy, // Filter out null values
       where: whereClause,
-      order: [[sequelize.fn('MAX', sequelize.col('poDate')), 'DESC']],
+      order: [[sequelize.fn('MAX', sequelize.col('po_date')), 'DESC']],
       limit: 12,
     });
 
@@ -758,13 +758,13 @@ const getForecastAndRevenueData = async (req, res) => {
     // END`;
 
     const fiscalYearForecast = `CASE 
-    WHEN MONTH(forcastDate) >= 4 THEN YEAR(forcastDate) + 1
-    ELSE YEAR(forcastDate)
+    WHEN MONTH(forcast_date) >= 4 THEN YEAR(forcast_date) + 1
+    ELSE YEAR(forcast_date)
   END`;
     const fiscalQuarterForecast = `CASE
-    WHEN MONTH(forcastDate) BETWEEN 4 AND 6 THEN 1
-    WHEN MONTH(forcastDate) BETWEEN 7 AND 9 THEN 2
-    WHEN MONTH(forcastDate) BETWEEN 10 AND 12 THEN 3
+    WHEN MONTH(forcast_date) BETWEEN 4 AND 6 THEN 1
+    WHEN MONTH(forcast_date) BETWEEN 7 AND 9 THEN 2
+    WHEN MONTH(forcast_date) BETWEEN 10 AND 12 THEN 3
     ELSE 4
   END`;
     // const fiscalMonthForecast = `CASE
@@ -823,19 +823,19 @@ const getForecastAndRevenueData = async (req, res) => {
       attributes: [
         granularity === 'yearly' || granularity === 'quarterly'
           ? [sequelize.literal(fiscalYearForecast), 'fiscalYear']
-          : [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
+          : [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
         granularity === 'quarterly'
           ? [sequelize.literal(fiscalQuarterForecast), 'fiscalQuarter']
           : granularity === 'yearly'
             ? [sequelize.literal(fiscalYearForecast), 'fiscalYear']
-            : [sequelize.fn('MONTH', sequelize.col('forcastDate')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'deliveryForecast'],
-        [sequelize.fn('SUM', sequelize.col('salesForcast')), 'salesForecast'],
-        [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'revenueForecast'],
+            : [sequelize.fn('MONTH', sequelize.col('forcast_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'deliveryForecast'],
+        [sequelize.fn('SUM', sequelize.col('sales_forcast')), 'salesForecast'],
+        [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'revenueForecast'],
       ],
       group: groupBy,
       where: whereClause,
-      order: [[sequelize.fn('MAX', sequelize.col('forcastDate')), 'DESC']],
+      order: [[sequelize.fn('MAX', sequelize.col('forcast_date')), 'DESC']],
       limit: 12,
     });
 
@@ -960,16 +960,16 @@ const getLatestPurchaseOrders = async (req, res) => {
     // Retrieve the purchase orders whose dates are nearer and about to come
     const latestPurchaseOrders = await sequelize.query(
       `SELECT 
-          poPrice,
-          poAmount,
-          poDescription,
-          poDate
+          po_price AS poPrice,
+          po_amount AS poAmount,
+          po_description AS poDescription,
+          po_date AS poDate
        FROM 
           purchaseorders
        WHERE 
-          poDate BETWEEN :currentDate AND :futureDate
+          po_date BETWEEN :currentDate AND :futureDate
        ORDER BY 
-          poDate
+          po_date
        `,
       {
         type: QueryTypes.SELECT,
@@ -995,7 +995,7 @@ const getTotalPurchase = async (req, res) => {
       const purchaseByCategory = await PurchaseOrder.findAll({
         attributes: [
           [sequelize.literal(`cluster`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(poAmount, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(po_amount, 0)')), 'totalAmount'],
         ],
         group: ['cluster'],
       });
@@ -1010,7 +1010,7 @@ const getTotalPurchase = async (req, res) => {
       const purchaseByCategory = await PurchaseOrder.findAll({
         attributes: [
           [sequelize.literal(`region`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(poAmount, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(po_amount, 0)')), 'totalAmount'],
         ],
         group: ['region'],
       });
@@ -1037,7 +1037,7 @@ const getTotalRevenue = async (req, res) => {
       const revenueByCluster = await RevenueModel.findAll({
         attributes: [
           [sequelize.literal(`cluster`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(actualRevenue, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(actual_revenue, 0)')), 'totalAmount'],
         ],
         group: ['cluster'],
       });
@@ -1047,7 +1047,7 @@ const getTotalRevenue = async (req, res) => {
       const revenueByRegion = await RevenueModel.findAll({
         attributes: [
           [sequelize.literal(`region`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(actualRevenue, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(actual_revenue, 0)')), 'totalAmount'],
         ],
         group: ['region'],
       });
@@ -1126,7 +1126,7 @@ const getPurchaseStats = async (req, res) => {
     startDate.setMonth(startDate.getMonth() - 12);
 
     const purchaseAmount = await PurchaseOrder.findAll({
-      attributes: [[sequelize.fn('SUM', sequelize.col('poAmount')), 'totalPurchaseAmount']],
+      attributes: [[sequelize.fn('SUM', sequelize.col('po_amount')), 'totalPurchaseAmount']],
     });
 
     // Query to get invoice stats for the last 12 months
@@ -1135,9 +1135,9 @@ const getPurchaseStats = async (req, res) => {
         [
           sequelize.fn(
             'CONCAT',
-            sequelize.fn('YEAR', sequelize.col('poDate')),
+            sequelize.fn('YEAR', sequelize.col('po_date')),
             '-',
-            sequelize.fn('MONTH', sequelize.col('poDate'))
+            sequelize.fn('MONTH', sequelize.col('po_date'))
           ),
           'monthYear',
         ],
@@ -1184,7 +1184,7 @@ const getLatestExpenses = async (req, res) => {
   try {
     // Assuming your ExpenseModel has a createdAt field to indicate when the expense was created
     const latestExpenses = await Expense.findAll({
-      order: [['expenseDate', 'DESC']], // Order by createdAt field in descending order
+      order: [['expense_date', 'DESC']], // Order by createdAt field in descending order
     });
 
     res.status(200).json(latestExpenses);
@@ -1200,7 +1200,7 @@ const getLatestPoAndInvoiceData = async (req, res) => {
     // Get the latest 7 Purchase Orders
     const latestPurchaseOrders = await PurchaseOrder.findAll({
       limit: 7,
-      order: [['poDate', 'DESC']],
+      order: [['po_date', 'DESC']],
     });
 
     // Calculate total PO amount
@@ -1224,7 +1224,7 @@ const getLatestPoAndInvoiceData = async (req, res) => {
     // Get the latest 7 Expenses
     const latestExpenses = await Expense.findAll({
       limit: 7,
-      order: [['expenseDate', 'DESC']],
+      order: [['expense_date', 'DESC']],
     });
 
     // Calculate total expense
@@ -1249,7 +1249,7 @@ const getLatestForecastsByDate = async (req, res) => {
   try {
     const forecastList = await ForecastModel.findAll({
       limit: 5,
-      order: [['forcastDate', 'DESC']],
+      order: [['forcast_date', 'DESC']],
     });
     res.json(forecastList);
   } catch (error) {
@@ -1314,17 +1314,17 @@ const getPurchaseAmount = async (req, res) => {
     const endDate = new Date(`${year}-${endMonth}-28`);
 
     const [result] = await sequelize.query(
-      'SELECT SUM(poAmount) AS totalPoAmount FROM purchaseorders;',
+      'SELECT SUM(po_amount) AS totalPoAmount FROM purchaseorders;',
       { type: QueryTypes.SELECT }
     );
 
     const [previousQuarterResult] = await sequelize.query(
       `SELECT 
-            SUM(poAmount) AS totalPoAmountLastQuarter 
+            SUM(po_amount) AS totalPoAmountLastQuarter 
          FROM 
             purchaseorders
          WHERE 
-            poDate BETWEEN :startDate AND :endDate`,
+            po_date BETWEEN :startDate AND :endDate`,
       {
         type: QueryTypes.SELECT,
         replacements: {
@@ -1337,7 +1337,7 @@ const getPurchaseAmount = async (req, res) => {
     const [statusCounts] = await sequelize.query(
       `SELECT 
             po_status, 
-            SUM(poAmount) AS count 
+            SUM(po_amount) AS count 
          FROM 
             purchaseorders
          GROUP BY 
@@ -1473,9 +1473,9 @@ const getRevenueSum = async (req, res) => {
 
     const QuarterSum = await RevenueModel.findAll({
       attributes: [
-        [sequelize.fn('SUM', sequelize.col('plannedRevenue')), 'totalPlannedRevenue'],
-        [sequelize.fn('SUM', sequelize.col('actualRevenue')), 'totalActualRevenue'],
-        [sequelize.fn('SUM', sequelize.col('forecastRevenue')), 'totalForecastRevenue'],
+        [sequelize.fn('SUM', sequelize.col('planned_revenue')), 'totalPlannedRevenue'],
+        [sequelize.fn('SUM', sequelize.col('actual_revenue')), 'totalActualRevenue'],
+        [sequelize.fn('SUM', sequelize.col('forecast_revenue')), 'totalForecastRevenue'],
       ],
       where: {
         createdAt: {
@@ -1486,9 +1486,9 @@ const getRevenueSum = async (req, res) => {
 
     const OverallSum = await RevenueModel.findAll({
       attributes: [
-        [sequelize.fn('SUM', sequelize.col('plannedRevenue')), 'totalPlannedRevenue'],
-        [sequelize.fn('SUM', sequelize.col('actualRevenue')), 'totalActualRevenue'],
-        [sequelize.fn('SUM', sequelize.col('forecastRevenue')), 'totalForecastRevenue'],
+        [sequelize.fn('SUM', sequelize.col('planned_revenue')), 'totalPlannedRevenue'],
+        [sequelize.fn('SUM', sequelize.col('actual_revenue')), 'totalActualRevenue'],
+        [sequelize.fn('SUM', sequelize.col('forecast_revenue')), 'totalForecastRevenue'],
       ],
     });
 
@@ -1679,8 +1679,8 @@ const getDeliveryData = async (req, res) => {
 
     const DeliverySumThisQuarter = await ForecastModel.findAll({
       attributes: [
-        [sequelize.fn('MONTH', sequelize.col('forcastDate')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'totalDeliveryForcast'],
+        [sequelize.fn('MONTH', sequelize.col('forcast_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'totalDeliveryForcast'],
       ],
       where: {
         forcastDate: {
@@ -1688,13 +1688,13 @@ const getDeliveryData = async (req, res) => {
         },
       },
       group: ['month'],
-      order: [[sequelize.fn('MONTH', sequelize.col('forcastDate')), 'ASC']],
+      order: [[sequelize.fn('MONTH', sequelize.col('forcast_date')), 'ASC']],
     });
 
     const OverallSum = await ForecastModel.findAll({
       attributes: [
         [sequelize.literal('cluster'), 'cluster'],
-        [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'totalDeliveryForcast'],
+        [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'totalDeliveryForcast'],
       ],
       where: {
         forcastDate: {
@@ -1747,7 +1747,7 @@ const getSalesData = async (req, res) => {
     const endDate = new Date(`${year}-${endMonth}-28`);
 
     const SalesSumThisQuarter = await ForecastModel.findAll({
-      attributes: [[sequelize.fn('SUM', sequelize.col('salesForcast')), 'totalSalesForcast']],
+      attributes: [[sequelize.fn('SUM', sequelize.col('sales_forcast')), 'totalSalesForcast']],
       where: {
         forcastDate: {
           [Op.between]: [startDate, endDate],
@@ -1758,7 +1758,7 @@ const getSalesData = async (req, res) => {
     const OverallSum = await ForecastModel.findAll({
       attributes: [
         [sequelize.literal('cluster'), 'cluster'],
-        [sequelize.fn('SUM', sequelize.col('salesForcast')), 'totalSalesForcast'],
+        [sequelize.fn('SUM', sequelize.col('sales_forcast')), 'totalSalesForcast'],
       ],
       where: {
         forcastDate: {
@@ -1815,7 +1815,7 @@ const getforecastData = async (req, res) => {
     const endOfMonth = new Date(year, currentMonth, 0);
 
     const ForecastSumThisQuarter = await ForecastModel.findAll({
-      attributes: [[sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForecast']],
+      attributes: [[sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForecast']],
       where: {
         forcastDate: {
           [Op.between]: [startDate, endDate],
@@ -1826,19 +1826,19 @@ const getforecastData = async (req, res) => {
     const OverallSum = await ForecastModel.findAll({
       attributes: [
         'cluster',
-        [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForecast'],
-        [sequelize.literal('updatedAt'), 'updatedAt'],
+        [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForecast'],
+        [sequelize.literal('updated_at'), 'updatedAt'],
       ],
       where: {
         forcastDate: {
           [Op.between]: [startOfMonth, endOfMonth],
         },
       },
-      group: ['cluster', 'updatedAt'],
+      group: ['cluster', 'updated_at'],
     });
 
     const ForecastSumThisMonth = await ForecastModel.findAll({
-      attributes: [[sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForecast']],
+      attributes: [[sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForecast']],
       where: {
         forcastDate: {
           [Op.between]: [startOfMonth, endOfMonth],
@@ -1878,18 +1878,18 @@ const getCummulativeGraphData = async (req, res) => {
     };
 
     const fiscalYearPurchase = `CASE
-      WHEN MONTH(poDate) >= 4 THEN YEAR(poDate) + 1
-      ELSE YEAR(poDate)
+      WHEN MONTH(po_date) >= 4 THEN YEAR(po_date) + 1
+      ELSE YEAR(po_date)
     END`;
     const fiscalQuarterPurchase = `CASE
-      WHEN MONTH(poDate) BETWEEN 4 AND 6 THEN 1
-      WHEN MONTH(poDate) BETWEEN 7 AND 9 THEN 2
-      WHEN MONTH(poDate) BETWEEN 10 AND 12 THEN 3
+      WHEN MONTH(po_date) BETWEEN 4 AND 6 THEN 1
+      WHEN MONTH(po_date) BETWEEN 7 AND 9 THEN 2
+      WHEN MONTH(po_date) BETWEEN 10 AND 12 THEN 3
       ELSE 4
     END`;
     const fiscalMonthPurchase = `CASE
-      WHEN MONTH(poDate) >= 4 THEN CONCAT(YEAR(poDate) + 1, '-', LPAD(MONTH(poDate), 2, '0'))
-      ELSE CONCAT(YEAR(poDate), '-', LPAD(MONTH(poDate), 2, '0'))
+      WHEN MONTH(po_date) >= 4 THEN CONCAT(YEAR(po_date) + 1, '-', LPAD(MONTH(po_date), 2, '0'))
+      ELSE CONCAT(YEAR(po_date), '-', LPAD(MONTH(po_date), 2, '0'))
     END`;
 
     const fiscalYearInvoice = `CASE
@@ -1912,18 +1912,18 @@ const getCummulativeGraphData = async (req, res) => {
       attributes: [
         granularity === 'yearly' || granularity === 'quarterly'
           ? [sequelize.literal(fiscalYearPurchase), 'fiscalYear']
-          : [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          : [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
         granularity === 'quarterly'
           ? [sequelize.literal(fiscalQuarterPurchase), 'fiscalQuarter']
           : granularity === 'yearly'
             ? [sequelize.literal(fiscalYearPurchase), 'fiscalYear']
-            : [sequelize.fn('MONTH', sequelize.col('poDate')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('poAmount')), 'totalAmount'],
+            : [sequelize.fn('MONTH', sequelize.col('po_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('po_amount')), 'totalAmount'],
         [sequelize.fn('COUNT', sequelize.col('id')), 'Count'],
       ],
       group: groupBy, // Filter out null values
       where: whereClause,
-      order: [[sequelize.fn('MAX', sequelize.col('poDate')), 'ASC']],
+      order: [[sequelize.fn('MAX', sequelize.col('po_date')), 'ASC']],
       limit: 12,
     });
 
@@ -2152,9 +2152,9 @@ const calculateQuarterSum = async (today, quarter) => {
 
   const quarterSum = await ForecastModel.findAll({
     attributes: [
-      [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'totalDeliveryForcast'],
-      [sequelize.fn('SUM', sequelize.col('salesForcast')), 'totalSalesForcast'],
-      [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForcast'],
+      [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'totalDeliveryForcast'],
+      [sequelize.fn('SUM', sequelize.col('sales_forcast')), 'totalSalesForcast'],
+      [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForcast'],
     ],
     where: {
       forcastDate: {
@@ -2169,9 +2169,9 @@ const calculateQuarterSum = async (today, quarter) => {
 const calculateOverallSum = async () => {
   const overallSum = await ForecastModel.findAll({
     attributes: [
-      [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'totalDeliveryForcast'],
-      [sequelize.fn('SUM', sequelize.col('salesForcast')), 'totalSalesForcast'],
-      [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForcast'],
+      [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'totalDeliveryForcast'],
+      [sequelize.fn('SUM', sequelize.col('sales_forcast')), 'totalSalesForcast'],
+      [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForcast'],
     ],
   });
 

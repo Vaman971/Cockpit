@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Dropdown from '../../../components/Dropdown';
 import IconHorizontalDots from '../../../components/Icon/IconHorizontalDots';
 import ReactApexChart from 'react-apexcharts';
-import axios from 'axios';
+import api from "../../../axios";
 import { Spinner } from 'flowbite-react';
 import ApexCharts from 'apexcharts';
 
@@ -16,7 +16,7 @@ const ForecastAndRevenue = ({ currencyCode }) => {
     const [graphPlannedRevenueData, setGraphPlannedRevenueData] = useState([]);
     const [graphDeliveryForecastData, setGraphDeliveryForecastData] = useState([]);
     const [forecastGraphRange, setForecastGraphRange] = useState([]);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    
 
     const getCurrencySymbol = (currencyCode) => {
         switch (currencyCode) {
@@ -42,7 +42,7 @@ const ForecastAndRevenue = ({ currencyCode }) => {
     const fetchForecastData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${apiUrl}/finance/getRevenueAndExtensionData`, {
+            const response = await api.get(`/finance/getRevenueAndExtensionData`, {
                 params: {
                     region: forecastRegion,
                     filter: forecastQuery === "calendar" ? "quarterly" : forecastQuery, 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../../axios";
 import ReactPaginate from "react-paginate";
 import ExpenseUpdate from "../../../components/Modal/Update/FinanceUpdate";
 import EditNote from "@mui/icons-material/EditNote";
@@ -15,7 +15,7 @@ const FinanceTable = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [query, setQuery] = useState("");
   const { currentUser } = useSelector((state) => state.user);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const [currentItems, setCurrentItem] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -49,7 +49,7 @@ const FinanceTable = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/expense/getExpenses`, {
+      const res = await api.get(`/expense/getExpenses`, {
         withCredentials: true,
       });
       const responseData = res.data;

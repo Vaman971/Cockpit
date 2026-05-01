@@ -4,6 +4,9 @@ import profileReducer from './profile/profileSlice';
 import { persistReducer,  persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import themeConfigSlice from './themeConfigSlice';
+import projectReducer from './project/projectSlice';
+import opportunityReducer from './opportunity/opportunitySlice';
+import missionReducer from './mission/missionSlice';
 
 
 const rootReducer = combineReducers(
@@ -11,6 +14,9 @@ const rootReducer = combineReducers(
     user: userReducer,
     profile: profileReducer,
     themeConfig: themeConfigSlice,
+    project: projectReducer,
+    opportunity: opportunityReducer,
+    mission: missionReducer,
   }
 );
 

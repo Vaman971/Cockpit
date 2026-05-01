@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import axios from "axios";
+import api from "../../../axios";
 import AddIcon from "@mui/icons-material/Add";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,18 +33,18 @@ const MissionTeam = ({ isOpen, onClose, missionId, toggleActionModal }) => {
   const [poId, setPoId] = useState(0);                          
   const navigate = useNavigate();                               
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   useEffect(() => {
     fetchData();
-  }, [apiUrl, showModal, teamModalOpen, teamMemberModal]);
+  }, [showModal, teamModalOpen, teamMemberModal]);
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/teams/getTeam/${missionId}`, {
+      const res = await api.get(`/teams/getTeam/${missionId}`, {
         withCredentials: true,
       });
-      const missionRes = await axios.get(`${apiUrl}/mission/getMission/${missionId}`, {                
+      const missionRes = await api.get(`/mission/getMission/${missionId}`, {                
         withCredentials: true,                                                                      
       });  
       const data = res.data;
@@ -72,8 +72,8 @@ const MissionTeam = ({ isOpen, onClose, missionId, toggleActionModal }) => {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await axios.delete(
-        `${apiUrl}/teams/deleteTeamMembers/${teamIdToDelete}/${userIdToDelete}`,
+      const res = await api.delete(
+        `/teams/deleteTeamMembers/${teamIdToDelete}/${userIdToDelete}`,
         { withCredentials: true }
       );
       const data = res.data;
@@ -98,8 +98,8 @@ const MissionTeam = ({ isOpen, onClose, missionId, toggleActionModal }) => {
   
     // Proceed with the API call if there's a change
     try {
-      const res = await axios.put(
-        `${apiUrl}/teams/updateUserTeams/${editingTeamId}/${editingUserId}`,
+      const res = await api.put(
+        `/teams/updateUserTeams/${editingTeamId}/${editingUserId}`,
         { occupancy: editingOccupancy },
         { withCredentials: true }
       );
@@ -119,8 +119,8 @@ const MissionTeam = ({ isOpen, onClose, missionId, toggleActionModal }) => {
 
   const handleSaveTeamName = async () => {
     try {
-      const res = await axios.put(
-        `${apiUrl}/teams/updateTeam/${teamId}`,
+      const res = await api.put(
+        `/teams/updateTeam/${teamId}`,
         { team_name: newTeamName },
         { withCredentials: true }
       );

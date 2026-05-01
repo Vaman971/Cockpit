@@ -4,7 +4,8 @@ import MissionModal from "../../../components/Modal/MissionModal";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import MissUpdate from "../../../components/Modal/Update/MissionUpdateModal";
 import ReactPaginate from "react-paginate";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMissions, selectAllMissions, selectMissionStatus } from "../../../redux/mission/missionSlice";
 import api from "../../../axios";
 import { missionService } from "../../../services/missionService";
 import Select from "react-select";
@@ -28,6 +29,9 @@ const Table = () => {
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedMissionType, setSelectedMissionType] = useState([]);
   const [isNewMission, setIsNewMission] = useState(false);
+  const dispatch = useDispatch();
+  const allMissions = useSelector(selectAllMissions);
+  const missionStatus = useSelector(selectMissionStatus);
   const { currentUser } = useSelector((state) => state.user);
   const [currentItems, setCurrentItem] = useState([]);
   const [selectedClusters, setSelectedClusters] = useState([]);
@@ -178,90 +182,11 @@ const Table = () => {
       });
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const res = await missionService.getAll();
-      const responseData = res.data;
-
-      if (responseData.success === false) {
-        console.log(responseData.message);
-      } else {
-        let filteredData = responseData.filter(
-          (item) => item.missionCards.active === true
-        );
-        if (query) {
-          filteredData = filteredData.filter((item) => {
-            const airbusIdExists = item.airbusId !== null && item.airbusId !== undefined;
-            const projectTitleExists = item.missionCards && item.missionCards.project_title;
-            const missionDescriptionExists = item.missionDescription;
-
-            return (
-              (airbusIdExists && item.airbusId.toString().includes(query.toString())) ||
-              (projectTitleExists && item.missionCards.project_title.toLowerCase().includes(query.toLowerCase())) ||
-              (missionDescriptionExists && item.missionDescription.toLowerCase().includes(query.toLowerCase()))
-            );
-          });
-        }
-        if (selectedLeads.length > 0) {
-          const selectedLeadIds = selectedLeads.map((lead) =>
-            parseInt(lead.value)
-          );
-          filteredData = filteredData.filter((item) =>
-            selectedLeadIds.includes(item.missionCardLeader)
-          );
-        }
-        if (selectedStatuses.length > 0) {
-          const selectedStatusValues = selectedStatuses.map(
-            (status) => status.value
-          );
-          filteredData = filteredData.filter((item) =>
-            selectedStatusValues.includes(item.status)
-          );
-        }
-        if (selectedClusters.length > 0) {
-          filteredData = filteredData.filter((item) =>
-            selectedClusters.includes(item.cluster)
-          );
-        }
-        if (selectedRegion.length > 0) {
-          filteredData = filteredData.filter((item) =>
-            selectedRegion.map(region => region.value).includes(item.region)
-          );
-        }
-        if (selectedMissionType.length > 0) {                                        // added this for the filter types only this if statement
-          filteredData = filteredData.filter((item) =>
-            selectedMissionType.map(mType => mType.value).includes(item.missionType)
-          );
-        }
-
-        filteredData = filteredData.map(item => {
-          const duration = calculateMissionDuration(item.missionStartDate, item.missionEndDate);
-          return {
-            ...item,
-            duration: duration === "Not Specified" ? -1 : duration
-          };
-        });
-        if (sortConfig.key) {
-          filteredData.sort((a, b) => {
-            const aVal = a[sortConfig.key];
-            const bVal = b[sortConfig.key];
-
-            if (typeof aVal === 'string' && typeof bVal === 'string') {
-              return sortConfig.direction === 'asc'
-                ? aVal.localeCompare(bVal)
-                : bVal.localeCompare(aVal);
-            }
-
-            return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
-          });
-        }
-
-        setData(filteredData);
-      }
-    } catch (error) {
-      console.log(error.message);
+  useEffect(() => {
+    if (missionStatus === 'idle' || !isActionModalOpen) {
+      dispatch(fetchMissions());
     }
-  };
+  }, [dispatch, missionStatus, isActionModalOpen]);
 
   const calculateMissionDuration = (startDate, endDate) => {
     if (!startDate || !endDate) {
@@ -277,18 +202,73 @@ const Table = () => {
   };
 
   useEffect(() => {
-    fetchData(); // Call fetchData() only once when the component mounts
-  }, [
-    isActionModalOpen,
-    currentPage,
-    query,
-    selectedLeads,
-    selectedStatuses,
-    selectedClusters,
-    selectedRegion,
-    selectedMissionType,
-    sortConfig
-  ]); // Empty dependency array means it runs only on mount
+    let filteredData = allMissions.filter(
+      (item) => item.missionCards?.active === true
+    );
+
+    if (query) {
+      filteredData = filteredData.filter((item) => {
+        const airbusIdExists = item.airbusId !== null && item.airbusId !== undefined;
+        const projectTitleExists = item.missionCards && item.missionCards.project_title;
+        const missionDescriptionExists = item.missionDescription;
+
+        return (
+          (airbusIdExists && item.airbusId.toString().includes(query.toString())) ||
+          (projectTitleExists && item.missionCards.project_title.toLowerCase().includes(query.toLowerCase())) ||
+          (missionDescriptionExists && item.missionDescription.toLowerCase().includes(query.toLowerCase()))
+        );
+      });
+    }
+
+    if (selectedLeads.length > 0) {
+      const selectedLeadIds = selectedLeads.map((lead) => parseInt(lead.value));
+      filteredData = filteredData.filter((item) => selectedLeadIds.includes(item.missionCardLeader));
+    }
+
+    if (selectedStatuses.length > 0) {
+      const selectedStatusValues = selectedStatuses.map((status) => status.value);
+      filteredData = filteredData.filter((item) => selectedStatusValues.includes(item.status));
+    }
+
+    if (selectedClusters.length > 0) {
+      filteredData = filteredData.filter((item) => selectedClusters.includes(item.cluster));
+    }
+
+    if (selectedRegion.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        selectedRegion.map(region => region.value).includes(item.region)
+      );
+    }
+
+    if (selectedMissionType.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        selectedMissionType.map(mType => mType.value).includes(item.missionType)
+      );
+    }
+
+    filteredData = filteredData.map(item => {
+      const duration = calculateMissionDuration(item.missionStartDate, item.missionEndDate);
+      return {
+        ...item,
+        duration: duration === "Not Specified" ? -1 : duration
+      };
+    });
+
+    if (sortConfig.key) {
+      filteredData.sort((a, b) => {
+        const aVal = a[sortConfig.key];
+        const bVal = b[sortConfig.key];
+
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          return sortConfig.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }
+
+        return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+    }
+
+    setData(filteredData);
+  }, [allMissions, query, selectedLeads, selectedStatuses, selectedClusters, selectedRegion, selectedMissionType, sortConfig]);
 
   const goToLastPageAndRow = (mid) => {
     const num = data.length + 1;
@@ -343,7 +323,7 @@ const Table = () => {
   }
 
   const handleMissionModal = () => {
-    fetchData();
+    dispatch(fetchMissions());
     setMissionModal(false);
   };
 

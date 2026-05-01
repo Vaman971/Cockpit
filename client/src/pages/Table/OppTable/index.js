@@ -4,7 +4,8 @@ import ReactPaginate from "react-paginate";
 import AddModal from "../../../components/Modal/AddModal";
 import "react-toastify/dist/ReactToastify.css";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOpportunities, selectAllOpportunities, selectOpportunityStatus } from "../../../redux/opportunity/opportunitySlice";
 import api from "../../../axios";
 import { opportunityService } from "../../../services/opportunityService";
 import DataModal from "../../../components/Modal/DateModal";
@@ -21,6 +22,9 @@ import { FaSortUp } from 'react-icons/fa';
 // import api from "../../../axios";
 
 const Table = () => {
+  const dispatch = useDispatch();
+  const allOpportunities = useSelector(selectAllOpportunities);
+  const opportunityStatus = useSelector(selectOpportunityStatus);
   const { currentUser } = useSelector((state) => state.user);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
   const [isDataModalOpen, setIsDataModalOpen] = useState(false);
@@ -142,8 +146,13 @@ const Table = () => {
     setSortConfig({ key, direction });
   };
 
-  const fetchData = useCallback(async () => {
+  useEffect(() => {
+    if (opportunityStatus === 'idle' || !isActionModalOpen || !addModal || !isCheckedOpp || !isDataModalOpen) {
+      dispatch(fetchOpportunities());
+    }
+  }, [dispatch, opportunityStatus, isActionModalOpen, addModal, isCheckedOpp, isDataModalOpen]);
 
+  useEffect(() => {
     const Keys = [
       "Siglum", // Prioritize Siglum
       "CustomerContactPoint",
@@ -151,78 +160,36 @@ const Table = () => {
       "OpRegion",
       "OpUnit",
       "source",
-      "CustomerContactPoint",
       "AssociatedWP",
-
     ];
 
-    try {
-      const res = await opportunityService.getAll();
-      const responseData = res.data;
+    let filteredData = allOpportunities.filter((item) => {
+      const isLeadUserMatch = leadUser.length === 0 || leadUser.includes(item.ledByUser?.user_id);
+      const isStatusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(item.status);
+      const isClusterMatch = selectedClusters.length === 0 || selectedClusters.includes(item.cluster);
+      const isPriortiesMatch = selectedPriorities.length === 0 || selectedPriorities.includes(item.Priority);
 
-      if (responseData.success === false) {
-        console.log(responseData.message);
-      } else {
-        let filteredData = responseData.filter((item) => {
-          const isLeadUserMatch =
-            leadUser.length === 0 || leadUser.includes(item.ledByUser.user_id);
-          const isStatusMatch =
-            selectedStatuses.length === 0 || selectedStatuses.includes(item.status);
-          const isClusterMatch =
-            selectedClusters.length === 0 || selectedClusters.includes(item.cluster);
-          const isPriortiesMatch =
-            selectedPriorities.length === 0 ||
-            selectedPriorities.includes(item.Priority);
+      const isQueryMatch = !query || query === "" ||
+        ["Siglum", "CustomerContactPoint"].some((key) => item[key]?.toLowerCase().includes(query.toLowerCase())) ||
+        Keys.some((key) => item[key]?.toLowerCase().includes(query.toLowerCase()));
 
-          // Updated query match logic
-          const isQueryMatch =
-            !query ||
-            query === "" ||
-            ["Siglum", "CustomerContactPoint"].some((key) =>
-              item[key]?.toLowerCase().includes(query.toLowerCase())
-            ) ||
-            Keys.some((key) =>
-              item[key]?.toLowerCase().includes(query.toLowerCase())
-            );
+      return isLeadUserMatch && isStatusMatch && isClusterMatch && isQueryMatch && isPriortiesMatch;
+    });
 
-          return (
-            isLeadUserMatch &&
-            isStatusMatch &&
-            isClusterMatch &&
-            isQueryMatch &&
-            isPriortiesMatch
-          );
-        });
+    if (sortConfig.key) {
+      filteredData.sort((a, b) => {
+        const aVal = a[sortConfig.key];
+        const bVal = b[sortConfig.key];
 
-        //  sorting logic
-        if (sortConfig.key) {
-          filteredData.sort((a, b) => {
-            const aVal = a[sortConfig.key];
-            const bVal = b[sortConfig.key];
-
-            if (typeof aVal === 'string' && typeof bVal === 'string') {
-              return sortConfig.direction === 'asc'
-                ? aVal.localeCompare(bVal)
-                : bVal.localeCompare(aVal);
-            }
-
-            return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
-          });
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          return sortConfig.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
         }
-        setData(filteredData);
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
 
-  }, [
-    leadUser,
-    selectedStatuses,
-    selectedClusters,
-    query,
-    selectedPriorities,
-    sortConfig
-  ]);
+        return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+    }
+    setData(filteredData);
+  }, [allOpportunities, leadUser, selectedStatuses, selectedClusters, query, selectedPriorities, sortConfig]);
 
   const fetchUserOptions = useCallback(async () => {
     try {
@@ -237,21 +204,9 @@ const Table = () => {
     }
   }, []);
 
-
   useEffect(() => {
-    fetchData();
     fetchUserOptions();
-  }, [
-    fetchData,
-    fetchUserOptions,
-    leadUser,
-    selectedStatuses,
-    isActionModalOpen,
-    currentPage,
-    query,
-    selectedClusters,
-    selectedPriorities,
-  ]);
+  }, [fetchUserOptions]);
 
   const toggleActionModal = (id) => {
     setOpportunityId(id); // Set the ID here
@@ -275,7 +230,7 @@ const Table = () => {
   };
 
   const handleAddModal = () => {
-    fetchData();
+    dispatch(fetchOpportunities());
     setAddModal(false);
   };
 

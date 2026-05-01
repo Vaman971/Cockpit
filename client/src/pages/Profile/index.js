@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Button, Label, TextInput, Textarea, Dropdown } from "flowbite-react";
-import axios from "axios";
+import api from "../../axios";
 import { useSelector, useDispatch } from "react-redux";
 import countryCodes from "../../assets/CountryCodes.json";
 import {
@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const filePickerRef = useRef();
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
   // const { currentProfile } = useSelector((state) => state.profile);
   const { currentUser } = useSelector((state) => state.user);
   const { currentProfile } = useSelector((state) => state.profile);
@@ -53,7 +53,7 @@ const Profile = () => {
 
   const handleSignOut = async () => {
     try {
-      const res = await axios.post(`${apiUrl}/users/signout`);
+      const res = await api.post(`/users/signout`);
       const data = res.data;
 
       if (data.success === false) {
@@ -81,8 +81,8 @@ const Profile = () => {
     e.preventDefault();
     try {
       dispatch(updateProfileStart());
-      const res = await axios.put(
-        `${apiUrl}/profile/updateUserProfile/${currentUser.user.username}`,
+      const res = await api.put(
+        `/profile/updateUserProfile/${currentUser.user.username}`,
         formData,
         {
           headers: {
@@ -114,8 +114,8 @@ const Profile = () => {
   useEffect(() => {
     const getProfileData = async () => {
       try {
-        const res = await axios.get(
-          `${apiUrl}/profile/getProfile/${currentUser.user.username}`,
+        const res = await api.get(
+          `/profile/getProfile/${currentUser.user.username}`,
           { withCredentials: true }
         );
         const profileData = res.data.userProfile;

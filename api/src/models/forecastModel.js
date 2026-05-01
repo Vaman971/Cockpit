@@ -11,22 +11,27 @@ const ForecastModel = sequelize.define(
       allowNull: false,
     },
     forcastDescription: {
+      field: 'forcast_description',
       type: DataTypes.STRING,
       allowNull: true,
     },
     deliveryForcast: {
+      field: 'delivery_forcast',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     salesForcast: {
+      field: 'sales_forcast',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     forcastDate: {
+      field: 'forcast_date',
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
     dpValue: {
+      field: 'dp_value',
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -43,10 +48,12 @@ const ForecastModel = sequelize.define(
       allowNull: true,
     },
     revenueForcast: {
+      field: 'revenue_forcast',
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
     updatedAt: {
+      field: 'updated_at',
       type: DataTypes.DATE,
       allowNull: true,
     },
@@ -56,6 +63,7 @@ const ForecastModel = sequelize.define(
       defaultValue: false,
     },
     currencyCode: {
+      field: 'currency_code',
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'USD',

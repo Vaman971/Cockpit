@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../../../axios";
 
 const InvoiceUpdate = ({ isOpen, handleClose, invoiceId }) => {
   const [formData, setFormData] = useState({});
@@ -8,12 +8,12 @@ const InvoiceUpdate = ({ isOpen, handleClose, invoiceId }) => {
   const [invoiceDate, setInvoiceDate] = useState("");
   const [invoiceAmount, setInvoiceAmount] = useState("");
   const [forecastAmount, setForecastAmount] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL;
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`${apiUrl}/invoice/updateInvoice/${invoiceId}`, formData, {
+      const res = await api.put(`/invoice/updateInvoice/${invoiceId}`, formData, {
         withCredentials: true,
       });
       const data = res.data;
@@ -48,7 +48,7 @@ const InvoiceUpdate = ({ isOpen, handleClose, invoiceId }) => {
   useEffect(() => {
     // Fetch invoice data by ID and populate form fields
     // Example:
-    axios.get(`${apiUrl}/invoice/getInvoice/${invoiceId}`,{withCredentials: true})
+    api.get(`/invoice/getInvoice/${invoiceId}`,{withCredentials: true})
       .then((response) => {
         const data = response.data;
         setData(data);
@@ -56,7 +56,7 @@ const InvoiceUpdate = ({ isOpen, handleClose, invoiceId }) => {
       .catch((error) => {
         console.error("Error fetching invoice:", error);
       });
-  }, [isOpen, invoiceId, apiUrl]);
+  }, [isOpen, invoiceId]);
 
 
   return (

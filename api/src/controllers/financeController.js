@@ -157,9 +157,9 @@ const getDeliveryInfo = async (req, res) => {
     // Get DeliverySumThisQuarter data
     let DeliverySumThisQuarter = await ForecastModel.findAll({
       attributes: [
-        [sequelize.fn('MONTH', sequelize.col('forcastDate')), 'month'],
-        [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
-        [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'totalDeliveryForcast'],
+        [sequelize.fn('MONTH', sequelize.col('forcast_date')), 'month'],
+        [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
+        [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'totalDeliveryForcast'],
         'currencyCode',
       ],
       where: {
@@ -168,15 +168,15 @@ const getDeliveryInfo = async (req, res) => {
         },
       },
       group: ['month', 'currencyCode', 'year'],
-      order: [[sequelize.fn('MONTH', sequelize.col('forcastDate')), 'ASC']],
+      order: [[sequelize.fn('MONTH', sequelize.col('forcast_date')), 'ASC']],
     });
 
     // Get OverallSum data
     let OverallSum = await ForecastModel.findAll({
       attributes: [
         [sequelize.literal('cluster'), 'cluster'],
-        [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
-        [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'totalDeliveryForcast'],
+        [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
+        [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'totalDeliveryForcast'],
         'currencyCode',
       ],
       where: {
@@ -303,8 +303,8 @@ const getforecastInfo = async (req, res) => {
 
     let ForecastSumThisQuarter = await ForecastModel.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
-        [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForecast'],
+        [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
+        [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForecast'],
         'currencyCode',
       ],
       where: {
@@ -318,9 +318,9 @@ const getforecastInfo = async (req, res) => {
     let OverallSum = await ForecastModel.findAll({
       attributes: [
         'cluster',
-        [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
-        [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForecast'],
-        [sequelize.literal('updatedAt'), 'updatedAt'],
+        [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
+        [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForecast'],
+        [sequelize.literal('updated_at'), 'updatedAt'],
         'currencyCode',
       ],
       where: {
@@ -333,8 +333,8 @@ const getforecastInfo = async (req, res) => {
 
     let ForecastSumThisMonth = await ForecastModel.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
-        [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'totalRevenueForecast'],
+        [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
+        [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'totalRevenueForecast'],
         'currencyCode',
       ],
       where: {
@@ -471,9 +471,9 @@ const getRevenueProjectionInfo = async (req, res) => {
     // Fetch upcoming revenue projection from ExtentionInvoice
     const RevenueProjectionFromExtention = await ExtentionInvoice.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('invoiceDate')), 'year'],
+        [sequelize.fn('YEAR', sequelize.col('invoice_date')), 'year'],
         [
-          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenueProjection')),
+          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenue_projection')),
           'totalRevenueProjection',
         ],
         'currencyCode',
@@ -547,10 +547,10 @@ const getRevenueProjectionInfo = async (req, res) => {
     // Fetch overall sum from ExtentionInvoice, aggregated by cluster
     const OverallSumFromExtention = await ExtentionInvoice.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('invoiceDate')), 'year'],
+        [sequelize.fn('YEAR', sequelize.col('invoice_date')), 'year'],
         [sequelize.col('invoiceExtention.cluster'), 'cluster'],
         [
-          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenueProjection')),
+          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenue_projection')),
           'totalRevenueProjection',
         ],
         'currencyCode',
@@ -783,9 +783,9 @@ const getRevenueRecognizedPieChart = async (req, res) => {
     if (query === 'cluster') {
       const revenueByCluster = await PurchaseOrder.findAll({
         attributes: [
-          [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
           [sequelize.literal(`cluster`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(poPrice, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(po_price, 0)')), 'totalAmount'],
           'currencyCode',
         ],
         group: ['cluster', 'year', 'currencyCode'],
@@ -829,9 +829,9 @@ const getRevenueRecognizedPieChart = async (req, res) => {
     } else {
       const revenueByRegion = await PurchaseOrder.findAll({
         attributes: [
-          [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
           [sequelize.literal(`region`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(poPrice, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(po_price, 0)')), 'totalAmount'],
           'currencyCode',
         ],
         group: ['region', 'currencyCode', 'year'],
@@ -909,24 +909,24 @@ END`;
 END`;
 
   const fiscalYearExtention = `CASE
-  WHEN MONTH(invoiceDate) >= 4 THEN YEAR(invoiceDate) + 1
-  ELSE YEAR(invoiceDate)
+  WHEN MONTH(invoice_date) >= 4 THEN YEAR(invoice_date) + 1
+  ELSE YEAR(invoice_date)
 END`;
   const fiscalQuarterExtention = `CASE
-  WHEN MONTH(invoiceDate) BETWEEN 4 AND 6 THEN 1
-  WHEN MONTH(invoiceDate) BETWEEN 7 AND 9 THEN 2
-  WHEN MONTH(invoiceDate) BETWEEN 10 AND 12 THEN 3
+  WHEN MONTH(invoice_date) BETWEEN 4 AND 6 THEN 1
+  WHEN MONTH(invoice_date) BETWEEN 7 AND 9 THEN 2
+  WHEN MONTH(invoice_date) BETWEEN 10 AND 12 THEN 3
   ELSE 4
 END`;
 
   const fiscalYearForecast = `CASE
-  WHEN MONTH(forcastDate) >= 4 THEN YEAR(forcastDate) + 1
-  ELSE YEAR(forcastDate)
+  WHEN MONTH(forcast_date) >= 4 THEN YEAR(forcast_date) + 1
+  ELSE YEAR(forcast_date)
 END`;
   const fiscalQuarterForecast = `CASE
-  WHEN MONTH(forcastDate) BETWEEN 4 AND 6 THEN 1
-  WHEN MONTH(forcastDate) BETWEEN 7 AND 9 THEN 2
-  WHEN MONTH(forcastDate) BETWEEN 10 AND 12 THEN 3
+  WHEN MONTH(forcast_date) BETWEEN 4 AND 6 THEN 1
+  WHEN MONTH(forcast_date) BETWEEN 7 AND 9 THEN 2
+  WHEN MONTH(forcast_date) BETWEEN 10 AND 12 THEN 3
   ELSE 4
 END`;
 
@@ -941,14 +941,14 @@ END`;
         'currencyCode',
         filter === 'yearly' || filter === 'quarterly'
           ? [sequelize.literal(fiscalYearForecast), 'fiscalYear']
-          : [sequelize.fn('YEAR', sequelize.col('forcastDate')), 'year'],
+          : [sequelize.fn('YEAR', sequelize.col('forcast_date')), 'year'],
         filter === 'quarterly'
           ? [sequelize.literal(fiscalQuarterForecast), 'fiscalQuarter']
           : filter === 'yearly'
             ? [sequelize.literal(fiscalYearForecast), 'fiscalYear']
-            : [sequelize.fn('MONTH', sequelize.col('forcastDate')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('deliveryForcast')), 'deliveryForecast'],
-        [sequelize.fn('SUM', sequelize.col('revenueForcast')), 'revenueForecast'],
+            : [sequelize.fn('MONTH', sequelize.col('forcast_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('delivery_forcast')), 'deliveryForecast'],
+        [sequelize.fn('SUM', sequelize.col('revenue_forcast')), 'revenueForecast'],
       ],
       group: groupBy,
     });
@@ -1106,14 +1106,14 @@ END`;
         'currencyCode',
         filter === 'yearly' || filter === 'quarterly'
           ? [sequelize.literal(fiscalYearExtention), 'fiscalYear']
-          : [sequelize.fn('YEAR', sequelize.col('invoiceDate')), 'year'],
+          : [sequelize.fn('YEAR', sequelize.col('invoice_date')), 'year'],
         filter === 'quarterly'
           ? [sequelize.literal(fiscalQuarterExtention), 'fiscalQuarter']
           : filter === 'yearly'
             ? [sequelize.literal(fiscalYearExtention), 'fiscalYear']
-            : [sequelize.fn('MONTH', sequelize.col('invoiceDate')), 'month'],
+            : [sequelize.fn('MONTH', sequelize.col('invoice_date')), 'month'],
         [
-          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenueProjection')),
+          sequelize.fn('SUM', sequelize.col('extentioninvoice.revenue_projection')),
           'revenueProjection',
         ],
       ],
@@ -1499,13 +1499,13 @@ END`;
 END`;
 
   const fiscalYearPurchase = `CASE 
-WHEN MONTH(poDate) >= 4 THEN YEAR(poDate) + 1
-ELSE YEAR(poDate)
+WHEN MONTH(po_date) >= 4 THEN YEAR(po_date) + 1
+ELSE YEAR(po_date)
 END`;
   const fiscalQuarterPurchase = `CASE
-WHEN MONTH(poDate) BETWEEN 4 AND 6 THEN 1
-WHEN MONTH(poDate) BETWEEN 7 AND 9 THEN 2
-WHEN MONTH(poDate) BETWEEN 10 AND 12 THEN 3
+WHEN MONTH(po_date) BETWEEN 4 AND 6 THEN 1
+WHEN MONTH(po_date) BETWEEN 7 AND 9 THEN 2
+WHEN MONTH(po_date) BETWEEN 10 AND 12 THEN 3
 ELSE 4
 END`;
 
@@ -1515,20 +1515,20 @@ END`;
         'currencyCode',
         filter === 'yearly' || filter === 'quarterly'
           ? [sequelize.literal(fiscalYearPurchase), 'fiscalYear']
-          : [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          : [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
         filter === 'quarterly'
           ? [sequelize.literal(fiscalQuarterPurchase), 'fiscalQuarter']
           : filter === 'yearly'
             ? [sequelize.literal(fiscalYearPurchase), 'fiscalYear']
-            : [sequelize.fn('MONTH', sequelize.col('poDate')), 'month'],
-        [sequelize.fn('SUM', sequelize.col('poAmount')), 'totalAmount'],
+            : [sequelize.fn('MONTH', sequelize.col('po_date')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('po_amount')), 'totalAmount'],
       ],
       group: groupBy, // Filter out null values
       where: {
         ...(cluster && { cluster }),
         ...(region && { region }),
       },
-      order: [[sequelize.fn('MAX', sequelize.col('poDate')), 'DESC']],
+      order: [[sequelize.fn('MAX', sequelize.col('po_date')), 'DESC']],
     });
     // console.log(purchases);
 
@@ -1776,9 +1776,9 @@ const getPurchaseOrderPieChart = async (req, res) => {
     if (query === 'cluster') {
       const purchaseByCluster = await PurchaseOrder.findAll({
         attributes: [
-          [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
           [sequelize.literal(`cluster`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(poAmount, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(po_amount, 0)')), 'totalAmount'],
           'currencyCode',
         ],
         group: ['cluster', 'year', 'currencyCode'],
@@ -1824,9 +1824,9 @@ const getPurchaseOrderPieChart = async (req, res) => {
     } else {
       const purchaseByRegion = await PurchaseOrder.findAll({
         attributes: [
-          [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
+          [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
           [sequelize.literal(`region`), 'range'],
-          [sequelize.fn('SUM', sequelize.literal('COALESCE(poAmount, 0)')), 'totalAmount'],
+          [sequelize.fn('SUM', sequelize.literal('COALESCE(po_amount, 0)')), 'totalAmount'],
           'currencyCode',
         ],
         group: ['region', 'currencyCode', 'year'],
@@ -1884,8 +1884,8 @@ const getPurchaseByMissionLeaderGraph = async (req, res) => {
     // Retrieve all purchase orders associated with the mission cards
     const purchaseOrders = await PurchaseOrder.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'],
-        [sequelize.literal('poAmount'), 'poAmount'],
+        [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'],
+        [sequelize.literal('po_amount'), 'poAmount'],
         'currencyCode',
         'poMissionId',
       ],
@@ -1959,12 +1959,12 @@ const getLatestPurchaseOrderProgress = async (req, res) => {
 
     const latestPurchaseOrders = await sequelize.query(
       `SELECT 
-          po.poNumber,
-          po.poPrice,
-          po.poAmount,
-          po.poDescription,
-          YEAR(po.poDate) as year,
-          po.currencyCode,
+          po.po_number AS poNumber,
+          po.po_price AS poPrice,
+          po.po_amount AS poAmount,
+          po.po_description AS poDescription,
+          YEAR(po.po_date) as year,
+          po.currency_code AS currencyCode,
           m.airbus_id,
           m.mission_description
        FROM 
@@ -1972,9 +1972,9 @@ const getLatestPurchaseOrderProgress = async (req, res) => {
        LEFT JOIN 
           missioncards m ON po.po_mission_id = m.id
        WHERE 
-          po.poDate BETWEEN :currentDate AND :futureDate
+          po.po_date BETWEEN :currentDate AND :futureDate
        ORDER BY 
-          po.poDate, po.currencyCode
+          po.po_date, po.currency_code
        `,
       {
         type: QueryTypes.SELECT,
@@ -2016,8 +2016,8 @@ const getPurchaseInfo = async (req, res) => {
     // Group purchase orders by year
     const purchaseOrdersByYear = await PurchaseOrder.findAll({
       attributes: [
-        [sequelize.fn('YEAR', sequelize.col('poDate')), 'year'], // Group by year
-        [sequelize.fn('SUM', sequelize.col('poAmount')), 'totalPurchaseAmount'], // Total per year
+        [sequelize.fn('YEAR', sequelize.col('po_date')), 'year'], // Group by year
+        [sequelize.fn('SUM', sequelize.col('po_amount')), 'totalPurchaseAmount'], // Total per year
         'currencyCode', // Keep track of the currency
       ],
       where: {
@@ -2054,9 +2054,9 @@ const getPurchaseInfo = async (req, res) => {
         [
           sequelize.fn(
             'CONCAT',
-            sequelize.fn('YEAR', sequelize.col('poDate')),
+            sequelize.fn('YEAR', sequelize.col('po_date')),
             '-',
-            sequelize.fn('MONTH', sequelize.col('poDate'))
+            sequelize.fn('MONTH', sequelize.col('po_date'))
           ),
           'monthYear',
         ],
@@ -2089,13 +2089,11 @@ const getPurchaseInfo = async (req, res) => {
       purchaseCount: stat.purchaseCount,
     }));
 
-    res
-      .status(200)
-      .json({
-        purchaseStats,
-        totalPurchaseAmount: totalPurchaseAmountConverted.toFixed(2),
-        currency,
-      });
+    res.status(200).json({
+      purchaseStats,
+      totalPurchaseAmount: totalPurchaseAmountConverted.toFixed(2),
+      currency,
+    });
   } catch (error) {
     console.error('Error fetching Purchase stats:', error);
     res.status(500).json({ error: 'Internal server error' });

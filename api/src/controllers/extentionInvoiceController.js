@@ -92,7 +92,7 @@ const createExtentionInvoice = async (req, res) => {
       }
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -104,7 +104,7 @@ const getExtentionInvoices = async (req, res) => {
     });
     res.status(200).json(invoices);
   } catch (error) {
-    console.error('Error retrieving extention invoices:', error.message);
+    logger.error('Error retrieving extention invoices:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -118,7 +118,7 @@ const getExtentionInvoiceById = async (req, res) => {
     }
     res.status(200).json(invoice);
   } catch (error) {
-    console.error('Error retrieving extention invoice by ID:', error);
+    logger.error('Error retrieving extention invoice by ID:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -129,7 +129,7 @@ const getExtentionInvoicesByExtentionId = async (req, res) => {
     const invoices = await ExtentionInvoice.findAll({
       where: { extentionId: id },
       include: [{ model: ExtentionModel, as: 'invoiceExtention' }],
-      order: [['invoiceDate', 'DESC']],
+      order: [['invoice_date', 'DESC']],
     });
     if (!invoices || invoices.length === 0) {
       return res
@@ -139,7 +139,7 @@ const getExtentionInvoicesByExtentionId = async (req, res) => {
       res.status(200).json(invoices);
     }
   } catch (error) {
-    console.error('Error retrieving Extention invoices by revenue ID:', error);
+    logger.error('Error retrieving Extention invoices by revenue ID:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -194,7 +194,7 @@ const updateExtentionInvoiceById = async (req, res) => {
 
     res.status(200).json(updatedInvoice);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -211,7 +211,7 @@ const deleteExtentionInvoiceById = async (req, res) => {
     await invoice.destroy();
     res.status(200).json({ message: 'Extention invoice deleted successfully' });
   } catch (error) {
-    console.error('Error deleting Extention invoice:', error.message);
+    logger.error('Error deleting Extention invoice:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
